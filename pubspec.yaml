@@ -18,8 +18,15 @@ dependencies:
   provider: ^6.1.2      # State management untuk mengatur logika bisnis
 
   # --- UTK ANGGOTA 3 (Maps & Lokasi) ---
-  google_maps_flutter: ^2.6.0  # Untuk menampilkan Google Maps
+  google_maps_flutter: ^2.17.0  # Untuk menampilkan Google Maps
   geolocator: ^11.0.0          # Untuk mengambil GPS HP Pengguna
+
+  # TAMBAHKAN DUA BARIS INI:
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  shared_preferences: ^2.5.5
+  image_picker: ^1.2.2
+  webview_flutter: ^4.13.1
 
 dev_dependencies:
   flutter_test:
@@ -28,7 +35,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-  # Bagian di bawah ini nanti dibuka oleh Anggota 1 jika sudah ada aset gambar/icon
-  # assets:
-  #   - assets/images/
+  
+  assets:
+     - assets/images/

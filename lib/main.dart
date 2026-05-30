@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'providers/auth_provider.dart';
-import 'providers/kost_provider.dart';
-import 'presentation/screens/login_screen.dart';
+import 'package:provider/provider.dart'; // <-- 1. Import package provider
+import 'providers/auth_provider.dart'; // <-- 2. Import AuthProvider yang kita buat tadi
+import 'presentation/screens/splash_screen.dart';
+import 'presentation/screens/ui_helpers.dart';
 
 void main() {
   runApp(
-    // Mendaftarkan semua provider agar bisa diakses di seluruh halaman aplikasi
+    // 3. Bungkus MyApp dengan MultiProvider agar state-nya bisa diakses global
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => KostProvider()),
+        // Kalau besok-besok mau nambah kost_provider atau booking_provider, tinggal taruh di bawah sini, Bang
       ],
       child: const MyApp(),
     ),
@@ -23,17 +23,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KostGo',
       debugShowCheckedModeBanner: false,
+      title: 'KostGo',
       theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.dark, // Mengikuti tema gelap di referensi kamu
+        brightness: Brightness.dark,
+        fontFamily: 'Roboto',
+        primaryColor: kPrimaryColor,
+        scaffoldBackgroundColor: kScaffoldBg,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: kAppBarBg,
+          elevation: 0,
         ),
+        colorScheme: ColorScheme.dark().copyWith(secondary: kAccentColor),
       ),
-      // Halaman pertama yang dibuka adalah Login Screen
-      home: const LoginScreen(),
+      home: const SplashScreen(),
     );
   }
 }
