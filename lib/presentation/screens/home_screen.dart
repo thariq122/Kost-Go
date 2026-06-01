@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'search_screen.dart';
 import 'detail_kost_screen.dart';
 import 'all_kost_screen.dart';
+import 'notification_screen.dart';
 import 'ui_helpers.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -338,8 +339,10 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.notifications_outlined,
                 color: Colors.white70, size: 28),
-            onPressed: () =>
-                _showInteractionFeedback(context, 'Membuka Notifikasi'),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotificationScreen()),
+            ),
           ),
         ],
       ),

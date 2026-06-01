@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../ui_helpers.dart';
+import 'owner_notification_screen.dart';
+import 'owner_faq_screen.dart';
 
 class OwnerProfileScreen extends StatelessWidget {
   const OwnerProfileScreen({super.key});
@@ -450,7 +452,11 @@ class OwnerProfileScreen extends StatelessWidget {
                 iconColor: kPrimaryLight,
                 title: 'Notifikasi',
                 subtitle: 'Pengaturan pemberitahuan',
-                onTap: () {},
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (_) => const OwnerNotificationScreen()),
+                ),
               ),
 
               const SizedBox(height: 8),
@@ -461,7 +467,10 @@ class OwnerProfileScreen extends StatelessWidget {
                 iconColor: Colors.grey,
                 title: 'Bantuan & FAQ',
                 subtitle: 'Pusat bantuan KostGo',
-                onTap: () {},
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const OwnerFaqScreen()),
+                ),
               ),
               _buildMenuItem(
                 context,

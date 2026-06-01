@@ -20,13 +20,24 @@ class RoomData {
 }
 
 class OwnerRoomsScreen extends StatefulWidget {
-  const OwnerRoomsScreen({super.key});
+  final bool openAddRoom;
+  const OwnerRoomsScreen({super.key, this.openAddRoom = false});
 
   @override
   State<OwnerRoomsScreen> createState() => _OwnerRoomsScreenState();
 }
 
 class _OwnerRoomsScreenState extends State<OwnerRoomsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.openAddRoom) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showAddRoomDialog(context);
+      });
+    }
+  }
+
   final List<RoomData> _rooms = [
     RoomData(
         number: '01',

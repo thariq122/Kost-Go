@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'map_screen.dart';
+import 'booking_screen.dart';
+import 'chat_screen.dart';
 import 'ui_helpers.dart';
 
 class DetailKostScreen extends StatelessWidget {
@@ -28,11 +30,28 @@ class DetailKostScreen extends StatelessWidget {
   });
 
   void _showBookingFeedback(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('⚡ Pengajuan sewa kos berhasil dikirim!'),
-        backgroundColor: Color(0xff14b8a6),
-        duration: Duration(seconds: 2),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BookingScreen(
+          namaKost: nama,
+          harga: harga,
+          tipe: tipe,
+          foto: foto,
+          lokasi: lokasiLengkap,
+        ),
+      ),
+    );
+  }
+
+  void _openChat(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChatScreen(
+          namaKost: nama,
+          namaPemilik: 'Pemilik Kos',
+        ),
       ),
     );
   }
@@ -100,7 +119,8 @@ class DetailKostScreen extends StatelessWidget {
                           buildGlassContainer(
                             radius: 20,
                             child: IconButton(
-                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              icon: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
@@ -109,7 +129,8 @@ class DetailKostScreen extends StatelessWidget {
                               buildGlassContainer(
                                 radius: 20,
                                 child: IconButton(
-                                  icon: const Icon(Icons.share_outlined, color: Colors.white),
+                                  icon: const Icon(Icons.share_outlined,
+                                      color: Colors.white),
                                   onPressed: () {},
                                 ),
                               ),
@@ -117,7 +138,8 @@ class DetailKostScreen extends StatelessWidget {
                               buildGlassContainer(
                                 radius: 20,
                                 child: IconButton(
-                                  icon: const Icon(Icons.favorite_border, color: Colors.white),
+                                  icon: const Icon(Icons.favorite_border,
+                                      color: Colors.white),
                                   onPressed: () {},
                                 ),
                               ),
@@ -372,12 +394,11 @@ class DetailKostScreen extends StatelessWidget {
               children: [
                 Container(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Color(0xffdc2626), Color(0xff991b1b)],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    )
-                  ),
+                      gradient: LinearGradient(
+                    colors: [Color(0xffdc2626), Color(0xff991b1b)],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                  )),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Row(
@@ -385,7 +406,8 @@ class DetailKostScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.bolt, color: Colors.yellowAccent, size: 16),
+                          const Icon(Icons.bolt,
+                              color: Colors.yellowAccent, size: 16),
                           const SizedBox(width: 6),
                           Text(
                             'Diskon Kilat Berlaku ',
@@ -458,12 +480,13 @@ class DetailKostScreen extends StatelessWidget {
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.2))
-                              ),
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color:
+                                          Colors.white.withValues(alpha: 0.2))),
                               child: IconButton(
-                                onPressed: () {},
+                                onPressed: () => _openChat(context),
                                 icon: const Icon(Icons.chat_bubble_outline,
                                     color: Colors.white, size: 20),
                               ),
@@ -552,10 +575,8 @@ class DetailKostScreen extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(label,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.white70, fontSize: 13, height: 1.4)),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white70, fontSize: 13, height: 1.4)),
           ),
         ],
       ),

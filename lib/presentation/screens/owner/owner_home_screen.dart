@@ -1,8 +1,25 @@
 import 'package:flutter/material.dart';
 import '../ui_helpers.dart';
+import 'owner_notification_screen.dart';
+import 'owner_rooms_screen.dart';
+import 'owner_tenants_screen.dart';
+import 'owner_financial_screen.dart';
+import 'owner_bookings_screen.dart';
 
-class OwnerHomeScreen extends StatelessWidget {
+class OwnerHomeScreen extends StatefulWidget {
   const OwnerHomeScreen({super.key});
+
+  @override
+  State<OwnerHomeScreen> createState() => _OwnerHomeScreenState();
+}
+
+class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
+  // Jumlah notif yang belum dibaca — di production dari provider/state
+  int _unreadNotifCount = 3;
+
+  void _markAllNotifsRead() {
+    setState(() => _unreadNotifCount = 0);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,26 +75,49 @@ class OwnerHomeScreen extends StatelessWidget {
           ),
           Row(
             children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  buildGlassContainer(
-                    radius: 14,
-                    padding: const EdgeInsets.all(10),
-                    child: const Icon(Icons.notifications_outlined,
-                        color: Colors.white70, size: 24),
-                  ),
-                  Positioned(
-                    top: -2,
-                    right: -2,
-                    child: Container(
-                      width: 10,
-                      height: 10,
-                      decoration: const BoxDecoration(
-                          color: Colors.redAccent, shape: BoxShape.circle),
+              // Tombol notifikasi dengan badge
+              GestureDetector(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => OwnerNotificationScreen(
+                        onAllRead: _markAllNotifsRead,
+                      ),
                     ),
-                  ),
-                ],
+                  );
+                },
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    buildGlassContainer(
+                      radius: 14,
+                      padding: const EdgeInsets.all(10),
+                      child: const Icon(Icons.notifications_outlined,
+                          color: Colors.white70, size: 24),
+                    ),
+                    if (_unreadNotifCount > 0)
+                      Positioned(
+                        top: -4,
+                        right: -4,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          constraints:
+                              const BoxConstraints(minWidth: 18, minHeight: 18),
+                          decoration: const BoxDecoration(
+                              color: Colors.redAccent, shape: BoxShape.circle),
+                          child: Text(
+                            '$_unreadNotifCount',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ),
               const SizedBox(width: 10),
               buildGlassContainer(
@@ -183,11 +223,11 @@ class OwnerHomeScreen extends StatelessWidget {
             const SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
+              child: const LinearProgressIndicator(
                 value: persen,
                 minHeight: 8,
-                backgroundColor: Colors.white.withValues(alpha: 0.2),
-                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                backgroundColor: Color(0x33ffffff),
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             ),
             const SizedBox(height: 10),
@@ -312,22 +352,43 @@ class OwnerHomeScreen extends StatelessWidget {
       {
         'icon': Icons.add_home_work_rounded,
         'label': 'Tambah\nKamar',
-        'color': kPrimaryColor
+        'color': kPrimaryColor,
+        'onTap': () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => const OwnerRoomsScreen(openAddRoom: true)),
+            ),
       },
       {
         'icon': Icons.assignment_turned_in_rounded,
         'label': 'Konfirmasi\nPesanan',
-        'color': Colors.orangeAccent
+        'color': Colors.orangeAccent,
+        'onTap': () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => OwnerBookingsScreen(
+                        pendingCount: 2,
+                        onCountChanged: (_) {},
+                      )),
+            ),
       },
       {
-        'icon': Icons.chat_bubble_outline_rounded,
-        'label': 'Hubungi\nPenghuni',
-        'color': const Color(0xff22c55e)
+        'icon': Icons.people_rounded,
+        'label': 'Daftar\nPenghuni',
+        'color': const Color(0xff22c55e),
+        'onTap': () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const OwnerTenantsScreen()),
+            ),
       },
       {
         'icon': Icons.bar_chart_rounded,
         'label': 'Laporan\nKeuangan',
-        'color': const Color(0xff818cf8)
+        'color': const Color(0xff818cf8),
+        'onTap': () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const OwnerFinancialScreen()),
+            ),
       },
     ];
 
@@ -337,11 +398,12 @@ class OwnerHomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: shortcuts.map((s) {
           final color = s['color'] as Color;
+          final onTap = s['onTap'] as VoidCallback;
           return Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: InkWell(
-                onTap: () {},
+                onTap: onTap,
                 borderRadius: BorderRadius.circular(16),
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 16),
