@@ -376,7 +376,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   gradient: kPrimaryGradient,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.tune_rounded, color: Colors.white, size: 18),
+                child: const Icon(Icons.tune_rounded,
+                    color: Colors.white, size: 18),
               )
             ],
           ),
@@ -568,8 +569,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 10),
             Text(label,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: Colors.white70,
-                    fontWeight: FontWeight.bold)),
+                    color: Colors.white70, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -604,8 +604,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: onSeeAll,
             child: Text('Lihat Semua',
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: kPrimaryLight,
-                    fontWeight: FontWeight.bold)),
+                    color: kPrimaryLight, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -614,7 +613,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSuperRareList(BuildContext context) {
     return SizedBox(
-      height: 380,
+      height: 400,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.only(

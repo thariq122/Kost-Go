@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'register_pemilik_screen.dart';
-import 'forgot_password_screen.dart'; // Pastikan import halaman lupa password
+import 'forgot_password_screen.dart';
+import 'owner/owner_main_navigation.dart';
 import 'ui_helpers.dart';
 
 class LoginPemilikScreen extends StatelessWidget {
@@ -78,7 +79,13 @@ class LoginPemilikScreen extends StatelessWidget {
 
             InkWell(
               onTap: () {
-                // TODO: Tambahkan aksi logika login pemilik jika backend ready
+                // Navigasi ke dashboard pemilik kos
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const OwnerMainNavigation(),
+                  ),
+                );
               },
               borderRadius: BorderRadius.circular(12),
               child: Ink(
@@ -140,12 +147,19 @@ class LoginPemilikScreen extends StatelessWidget {
       radius: 12,
       child: TextField(
         obscureText: isPass,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+        style: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+          labelStyle: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(color: Colors.grey),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ),
       ),
     );
