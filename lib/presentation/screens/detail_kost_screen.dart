@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/favorites_provider.dart';
 import 'map_screen.dart';
 import 'booking_screen.dart';
 import 'chat_screen.dart';
 import 'ui_helpers.dart';
 
-class DetailKostScreen extends StatelessWidget {
-  // Semua variable data kita buat dinamis di sini
+class DetailKostScreen extends StatefulWidget {
   final String nama;
   final String harga;
   final String tipe;
   final String foto;
   final String ukuranKamar;
   final String lokasiLengkap;
-  final List<String>
-      fasilitasKamar; // List fasilitas biar tiap kos bisa beda jumlah & isinya
-  final List<Map<String, String>>
-      tempatTerdekat; // List tempat terdekat custom per kos
+  final List<String> fasilitasKamar;
+  final List<Map<String, String>> tempatTerdekat;
+  final String rating;
+  final String fasilitas;
 
   const DetailKostScreen({
     super.key,
@@ -27,18 +28,25 @@ class DetailKostScreen extends StatelessWidget {
     required this.lokasiLengkap,
     required this.fasilitasKamar,
     required this.tempatTerdekat,
+    this.rating = '4.8',
+    this.fasilitas = '',
   });
 
-  void _showBookingFeedback(BuildContext context) {
+  @override
+  State<DetailKostScreen> createState() => _DetailKostScreenState();
+}
+
+class _DetailKostScreenState extends State<DetailKostScreen> {
+  void _openBooking(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => BookingScreen(
-          namaKost: nama,
-          harga: harga,
-          tipe: tipe,
-          foto: foto,
-          lokasi: lokasiLengkap,
+          namaKost: widget.nama,
+          harga: widget.harga,
+          tipe: widget.tipe,
+          foto: widget.foto,
+          lokasi: widget.lokasiLengkap,
         ),
       ),
     );
@@ -49,38 +57,66 @@ class DetailKostScreen extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (_) => ChatScreen(
-          namaKost: nama,
+          namaKost: widget.nama,
           namaPemilik: 'Pemilik Kos',
         ),
       ),
     );
   }
 
+  void _toggleFavorite(BuildContext context) {
+    final favProvider = Provider.of<FavoritesProvider>(context, listen: false);
+    final kost = FavoriteKost(
+      nama: widget.nama,
+      lokasi: widget.lokasiLengkap,
+      harga: widget.harga,
+      tipe: widget.tipe,
+      foto: widget.foto,
+      rating: widget.rating,
+      fasilitas: widget.fasilitas,
+      ukuranKamar: widget.ukuranKamar,
+      lokasiLengkap: widget.lokasiLengkap,
+      fasilitasKamar: widget.fasilitasKamar,
+      tempatTerdekat: widget.tempatTerdekat,
+    );
+    favProvider.toggle(kost);
+    final isFav = favProvider.isFavorite(widget.nama);
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(isFav
+            ? '❤️ ${widget.nama} ditambahkan ke favorit'
+            : '🤍 ${widget.nama} dihapus dari favorit'),
+        backgroundColor: isFav ? Colors.redAccent : Colors.grey.shade700,
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final favProvider = Provider.of<FavoritesProvider>(context);
+    final isFav = favProvider.isFavorite(widget.nama);
+
     return Scaffold(
       backgroundColor: kScaffoldBg,
       body: Stack(
         children: [
-          // 1. KONTEN DETAIL (SCROLLABLE)
           SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Bagian Gambar Utama Dinamis
                 Stack(
                   children: [
                     Container(
-                      height: 320, // Taller for better parallax feel
+                      height: 320,
                       width: double.infinity,
-                      decoration: const BoxDecoration(
-                        color: kCardBg,
-                      ),
+                      decoration: const BoxDecoration(color: kCardBg),
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
                           Image.asset(
-                            'assets/images/$foto',
+                            'assets/images/${widget.foto}',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return const Center(
@@ -89,7 +125,6 @@ class DetailKostScreen extends StatelessWidget {
                               );
                             },
                           ),
-                          // Premium gradient overlay
                           Positioned.fill(
                             child: DecoratedBox(
                               decoration: BoxDecoration(
@@ -124,33 +159,31 @@ class DetailKostScreen extends StatelessWidget {
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
-                          Row(
-                            children: [
-                              buildGlassContainer(
-                                radius: 20,
-                                child: IconButton(
-                                  icon: const Icon(Icons.share_outlined,
-                                      color: Colors.white),
-                                  onPressed: () {},
+                          // Hanya tombol favorit, share dihapus
+                          buildGlassContainer(
+                            radius: 20,
+                            child: IconButton(
+                              icon: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 300),
+                                transitionBuilder: (child, anim) =>
+                                    ScaleTransition(scale: anim, child: child),
+                                child: Icon(
+                                  isFav
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  key: ValueKey(isFav),
+                                  color:
+                                      isFav ? Colors.redAccent : Colors.white,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-                              buildGlassContainer(
-                                radius: 20,
-                                child: IconButton(
-                                  icon: const Icon(Icons.favorite_border,
-                                      color: Colors.white),
-                                  onPressed: () {},
-                                ),
-                              ),
-                            ],
+                              onPressed: () => _toggleFavorite(context),
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ],
                 ),
-
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
@@ -165,7 +198,7 @@ class DetailKostScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
-                          tipe,
+                          widget.tipe,
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall
@@ -179,7 +212,7 @@ class DetailKostScreen extends StatelessWidget {
 
                       // Nama Kos Dinamis
                       Text(
-                        nama,
+                        widget.nama,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: Colors.white,
                             fontSize: 22,
@@ -223,7 +256,7 @@ class DetailKostScreen extends StatelessWidget {
                       // --- 1. SPESIFIKASI TIPE KAMAR (DINAMIS) ---
                       _buildSectionHeader(context, 'Spesifikasi tipe kamar'),
                       _buildInfoRow(context, Icons.crop_landscape_rounded,
-                          ukuranKamar), // <--- Dinamis
+                          widget.ukuranKamar),
                       _buildInfoRow(context, Icons.flash_off_rounded,
                           'Tidak termasuk listrik'),
                       const Divider(color: Colors.white10, height: 32),
@@ -231,7 +264,7 @@ class DetailKostScreen extends StatelessWidget {
                       // --- 2. FASILITAS KAMAR (DINAMIS MENGGUNAKAN LOOPING) ---
                       _buildSectionHeader(context, 'Fasilitas Kamar'),
                       Column(
-                        children: fasilitasKamar.map((fasilitas) {
+                        children: widget.fasilitasKamar.map((fasilitas) {
                           return _buildInfoRow(context,
                               Icons.check_circle_outline_rounded, fasilitas);
                         }).toList(),
@@ -266,7 +299,7 @@ class DetailKostScreen extends StatelessWidget {
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
-                              lokasiLengkap, // <--- Dinamis
+                              widget.lokasiLengkap,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
@@ -289,8 +322,8 @@ class DetailKostScreen extends StatelessWidget {
                               IgnorePointer(
                                 ignoring: true,
                                 child: MapScreen(
-                                  namaKost: nama,
-                                  lokasiKost: lokasiLengkap,
+                                  namaKost: widget.nama,
+                                  lokasiKost: widget.lokasiLengkap,
                                 ),
                               ),
                               Positioned.fill(
@@ -302,8 +335,8 @@ class DetailKostScreen extends StatelessWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => MapScreen(
-                                            namaKost: nama,
-                                            lokasiKost: lokasiLengkap,
+                                            namaKost: widget.nama,
+                                            lokasiKost: widget.lokasiLengkap,
                                           ),
                                         ),
                                       );
@@ -324,8 +357,8 @@ class DetailKostScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => MapScreen(
-                                namaKost: nama,
-                                lokasiKost: lokasiLengkap,
+                                namaKost: widget.nama,
+                                lokasiKost: widget.lokasiLengkap,
                               ),
                             ),
                           );
@@ -367,7 +400,7 @@ class DetailKostScreen extends StatelessWidget {
                       _buildSectionHeader(context, 'Tempat Terdekat'),
                       const SizedBox(height: 8),
                       Column(
-                        children: tempatTerdekat.map((tempat) {
+                        children: widget.tempatTerdekat.map((tempat) {
                           return _buildLocationDetailRow(
                               context,
                               Icons.place_outlined,
@@ -444,7 +477,7 @@ class DetailKostScreen extends StatelessWidget {
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
-                                  harga, // <--- Dinamis mengikuti data item yang di-klik
+                                  widget.harga,
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium
@@ -493,7 +526,7 @@ class DetailKostScreen extends StatelessWidget {
                             ),
                             const SizedBox(width: 12),
                             ElevatedButton(
-                              onPressed: () => _showBookingFeedback(context),
+                              onPressed: () => _openBooking(context),
                               style: ElevatedButton.styleFrom(
                                 padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(

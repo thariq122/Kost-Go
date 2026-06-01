@@ -1,6 +1,4 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'ui_helpers.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import 'home_screen.dart';
@@ -8,6 +6,8 @@ import 'map_screen.dart';
 import 'auth_selection_screen.dart';
 import 'profile_screen.dart';
 import 'booking_history_screen.dart';
+import 'favorites_screen.dart';
+import 'ui_helpers.dart';
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -19,19 +19,15 @@ class MainNavigation extends StatefulWidget {
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
 
-  // Fungsi pengecekan akses sebelum pindah tab navigasi bawah
   void _onItemTapped(int index, bool isLoggedIn) {
-    // Jika user menekan tab Peta (index 1) atau Booking (index 2) tapi BELUM login
-    if ((index == 1 || index == 2) && !isLoggedIn) {
+    // Tab Peta (1), Booking (2), Favorit (3) butuh login
+    if ((index == 1 || index == 2 || index == 3) && !isLoggedIn) {
       _showLoginRequiredSheet();
     } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+      setState(() => _selectedIndex = index);
     }
   }
 
-  // Pop-up notifikasi estetik untuk menyuruh user login terlebih dahulu
   void _showLoginRequiredSheet() {
     showModalBottomSheet(
       context: context,
@@ -66,10 +62,8 @@ class _MainNavigationState extends State<MainNavigation> {
               const SizedBox(height: 24),
               Text(
                 'Yuk, Masuk Akun dulu!',
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge
-                    ?.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: Colors.white, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 12),
@@ -94,7 +88,8 @@ class _MainNavigationState extends State<MainNavigation> {
                   onPressed: () {
                     Navigator.pop(context); // Tutup dialog
                     setState(() {
-                      _selectedIndex = 3; // Alihkan otomatis ke tab 'Masuk/Profil'
+                      _selectedIndex =
+                          3; // Alihkan otomatis ke tab 'Masuk/Profil'
                     });
                   },
                   child: Ink(
@@ -105,8 +100,12 @@ class _MainNavigationState extends State<MainNavigation> {
                     child: Container(
                       alignment: Alignment.center,
                       child: Text('Masuk Sekarang',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              color: Colors.white, fontWeight: FontWeight.bold)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ),
@@ -115,10 +114,8 @@ class _MainNavigationState extends State<MainNavigation> {
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text('Nanti Saja',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.copyWith(color: Colors.grey, fontWeight: FontWeight.bold)),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 16),
             ],
@@ -133,26 +130,15 @@ class _MainNavigationState extends State<MainNavigation> {
     final authProvider = Provider.of<AuthProvider>(context);
     final bool currentLoginStatus = authProvider.isLoggedIn;
 
-    // Menghubungkan ke seluruh halaman utama aplikasi
     final List<Widget> screens = [
-      // Tab 0: Beranda
       HomeScreen(isLoggedIn: currentLoginStatus),
-
-      // Tab 1: Peta KostGo
       const MapScreen(),
-
-      // Tab 2: Halaman Booking Kosan
       const BookingHistoryScreen(),
-
-      // Tab 3: Pilihan Masuk / Profil
+      const FavoritesScreen(),
       currentLoginStatus
           ? const ProfileScreen()
           : AuthSelectionScreen(
-              onLoginSuccess: () {
-                setState(() {
-                  _selectedIndex = 0;
-                });
-              },
+              onLoginSuccess: () => setState(() => _selectedIndex = 0),
             ),
     ];
 
@@ -172,11 +158,20 @@ class _MainNavigationState extends State<MainNavigation> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildNavItem(0, Icons.home_filled, 'Beranda', currentLoginStatus),
+                _buildNavItem(
+                    0, Icons.home_filled, 'Beranda', currentLoginStatus),
                 _buildNavItem(1, Icons.map_rounded, 'Peta', currentLoginStatus),
-                _buildNavItem(2, Icons.list_alt_rounded, 'Booking', currentLoginStatus),
-                _buildNavItem(3, currentLoginStatus ? Icons.person_rounded : Icons.login_rounded, 
-                  currentLoginStatus ? 'Profil' : 'Masuk', currentLoginStatus),
+                _buildNavItem(
+                    2, Icons.list_alt_rounded, 'Booking', currentLoginStatus),
+                _buildNavItem(
+                    3, Icons.favorite_rounded, 'Favorit', currentLoginStatus),
+                _buildNavItem(
+                    4,
+                    currentLoginStatus
+                        ? Icons.person_rounded
+                        : Icons.login_rounded,
+                    currentLoginStatus ? 'Profil' : 'Masuk',
+                    currentLoginStatus),
               ],
             ),
           ),
@@ -185,7 +180,8 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label, bool isLoggedIn) {
+  Widget _buildNavItem(
+      int index, IconData icon, String label, bool isLoggedIn) {
     bool isSelected = _selectedIndex == index;
     return GestureDetector(
       onTap: () => _onItemTapped(index, isLoggedIn),
@@ -214,8 +210,7 @@ class _MainNavigationState extends State<MainNavigation> {
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: kPrimaryLight,
-                    fontWeight: FontWeight.bold),
+                    color: kPrimaryLight, fontWeight: FontWeight.bold),
               ),
             ]
           ],
@@ -224,4 +219,3 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
-

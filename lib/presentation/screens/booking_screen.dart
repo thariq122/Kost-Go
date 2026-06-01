@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'ui_helpers.dart';
@@ -31,7 +32,8 @@ class _BookingScreenState extends State<BookingScreen> {
   DateTime _selectedDate = DateTime.now().add(const Duration(days: 3));
   int _currentStep = 0;
   PaymentMethod _paymentMethod = PaymentMethod.transfer;
-  File? _proofImage;
+  XFile? _proofXFile; // cross-platform (web + mobile)
+  File? _proofFile; // mobile only, untuk Image.file
   bool _isUploadingImage = false;
 
   final List<int> _durationOptions = [1, 3, 6, 12];
@@ -102,7 +104,13 @@ class _BookingScreenState extends State<BookingScreen> {
         maxWidth: 1200,
       );
       if (picked != null) {
-        setState(() => _proofImage = File(picked.path));
+        setState(() {
+          _proofXFile = picked;
+          // Di web File() tidak tersedia, hanya pakai XFile
+          if (!kIsWeb) {
+            _proofFile = File(picked.path);
+          }
+        });
       }
     } catch (e) {
       if (mounted) {
@@ -210,7 +218,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   void _submitBooking() {
     // Validasi: transfer wajib upload bukti
-    if (_paymentMethod == PaymentMethod.transfer && _proofImage == null) {
+    if (_paymentMethod == PaymentMethod.transfer && _proofXFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Harap upload bukti transfer terlebih dahulu'),
@@ -963,29 +971,40 @@ class _BookingScreenState extends State<BookingScreen> {
                 color: kCardBg,
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: _proofImage != null
+                  color: _proofXFile != null
                       ? kPrimaryColor
                       : kPrimaryColor.withValues(alpha: 0.3),
-                  width: _proofImage != null ? 2 : 1.5,
+                  width: _proofXFile != null ? 2 : 1.5,
                 ),
               ),
               child: _isUploadingImage
                   ? const Center(
                       child: CircularProgressIndicator(color: kPrimaryColor))
-                  : _proofImage != null
+                  : _proofXFile != null
                       ? Stack(
                           fit: StackFit.expand,
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(17),
-                              child:
-                                  Image.file(_proofImage!, fit: BoxFit.cover),
+                              child: kIsWeb
+                                  ? Image.network(
+                                      _proofXFile!.path,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) => const Icon(
+                                          Icons.image_outlined,
+                                          color: Colors.white24,
+                                          size: 40),
+                                    )
+                                  : Image.file(_proofFile!, fit: BoxFit.cover),
                             ),
                             Positioned(
                               top: 8,
                               right: 8,
                               child: GestureDetector(
-                                onTap: () => setState(() => _proofImage = null),
+                                onTap: () => setState(() {
+                                  _proofXFile = null;
+                                  _proofFile = null;
+                                }),
                                 child: Container(
                                   padding: const EdgeInsets.all(6),
                                   decoration: const BoxDecoration(
@@ -1158,7 +1177,7 @@ class _BookingScreenState extends State<BookingScreen> {
     final isTransfer = _paymentMethod == PaymentMethod.transfer;
     final canSubmit = !isLastStep ||
         _paymentMethod == PaymentMethod.cash ||
-        _proofImage != null;
+        _proofXFile != null;
 
     return buildGlassContainer(
       radius: 0,
@@ -1202,7 +1221,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      if (isLastStep && isTransfer && _proofImage == null) ...[
+                      if (isLastStep && isTransfer && _proofXFile == null) ...[
                         const Icon(Icons.upload_rounded,
                             color: Colors.white54, size: 16),
                         const SizedBox(width: 6),

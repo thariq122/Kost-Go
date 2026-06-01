@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; // <-- 1. Import package provider
-import 'providers/auth_provider.dart'; // <-- 2. Import AuthProvider yang kita buat tadi
+import 'package:provider/provider.dart';
+import 'providers/auth_provider.dart';
+import 'providers/favorites_provider.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/screens/ui_helpers.dart';
 
@@ -10,7 +11,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
-        // Kalau besok-besok mau nambah kost_provider atau booking_provider, tinggal taruh di bawah sini, Bang
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()),
       ],
       child: const MyApp(),
     ),
