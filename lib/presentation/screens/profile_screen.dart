@@ -130,13 +130,13 @@ class ProfileScreen extends StatelessWidget {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
-                decoration: kCardDecoration(radius: 16),
+                decoration: kElevatedCardDecoration(radius: 16),
                 child: Column(
                   children: [
                     _buildInfoRow(context, 'Nomor WhatsApp',
                         authProvider.userPhone, Icons.phone),
                     const Divider(
-                        color: Colors.grey, height: 24, thickness: 0.1),
+                        color: Colors.white24, height: 24, thickness: 0.5),
                     _buildInfoRow(context, 'Status Akun', 'Terverifikasi',
                         Icons.verified_user),
                   ],
@@ -158,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
               const SizedBox(height: 12),
 
               Container(
-                decoration: kCardDecoration(radius: 16),
+                decoration: kElevatedCardDecoration(radius: 16),
                 child: Column(
                   children: [
                     _buildMenuTile(
@@ -188,7 +188,7 @@ class ProfileScreen extends StatelessWidget {
                       () => _navigateToTerms(context),
                     ),
                     const Divider(
-                        color: Colors.grey, height: 1, thickness: 0.1),
+                        color: Colors.white24, height: 1, thickness: 0.5),
                     _buildMenuTile(
                       context,
                       'Keluar Akun',
@@ -210,8 +210,12 @@ class ProfileScreen extends StatelessWidget {
       BuildContext context, String title, String value, IconData icon) {
     return Row(
       children: [
-        Icon(icon, color: Colors.tealAccent, size: 20),
-        const SizedBox(width: 12),
+        buildGlassContainer(
+          radius: 12,
+          padding: const EdgeInsets.all(10),
+          child: Icon(icon, color: kPrimaryLight, size: 20),
+        ),
+        const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -219,8 +223,8 @@ class ProfileScreen extends StatelessWidget {
                 style: Theme.of(context)
                     .textTheme
                     .bodySmall
-                    ?.copyWith(color: Colors.grey[500], fontSize: 12)),
-            const SizedBox(height: 2),
+                    ?.copyWith(color: Colors.grey[400], fontSize: 12)),
+            const SizedBox(height: 4),
             Text(value,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.white,
@@ -240,7 +244,7 @@ class ProfileScreen extends StatelessWidget {
         leading: Icon(icon,
             color: textColor == Colors.redAccent
                 ? Colors.redAccent
-                : Colors.tealAccent),
+                : kPrimaryLight),
         title: Text(
           title,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(

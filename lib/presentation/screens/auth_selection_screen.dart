@@ -61,29 +61,36 @@ class AuthSelectionScreen extends StatelessWidget {
     return InkWell(
       onTap: () => Navigator.push(
           context, MaterialPageRoute(builder: (context) => target)),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
         padding: const EdgeInsets.all(20),
-        decoration: kCardDecoration(radius: 16),
+        decoration: kElevatedCardDecoration(radius: 16),
         child: Row(
           children: [
-            Icon(icon, color: const Color(0xff14b8a6), size: 40),
-            const SizedBox(width: 20),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
-                Text(desc,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.grey, fontSize: 12)),
-              ],
+            buildGlassContainer(
+              radius: 16,
+              padding: const EdgeInsets.all(12),
+              child: Icon(icon, color: kPrimaryLight, size: 36),
             ),
-            const Spacer(),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 4),
+                  Text(desc,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Colors.grey, fontSize: 13, height: 1.4)),
+                ],
+              ),
+            ),
             const Icon(Icons.chevron_right, color: Colors.grey),
           ],
         ),

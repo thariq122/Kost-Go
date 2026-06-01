@@ -354,32 +354,30 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const SearchScreen()));
         },
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
+        borderRadius: BorderRadius.circular(20),
+        child: buildGlassContainer(
+          radius: 20,
           height: 55,
-          decoration: BoxDecoration(
-            color: kCardBg,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              // Soft Glow Effect for Search Bar
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-            border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-          ),
           child: Row(
             children: [
               const SizedBox(width: 16),
-              const Icon(Icons.search, color: Color(0xff14b8a6), size: 22),
+              const Icon(Icons.search, color: kPrimaryLight, size: 22),
               const SizedBox(width: 12),
               Text('Cari area atau nama kost...',
                   style: Theme.of(context)
                       .textTheme
                       .bodyMedium
                       ?.copyWith(color: Colors.grey, fontSize: 14)),
+              const Spacer(),
+              Container(
+                margin: const EdgeInsets.only(right: 8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: kPrimaryGradient,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.tune_rounded, color: Colors.white, size: 18),
+              )
             ],
           ),
         ),
@@ -390,40 +388,34 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildGuestBanner() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        width: double.infinity,
+      child: buildGlassContainer(
+        radius: 24,
         padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xff14b8a6).withValues(alpha: 0.15),
-              const Color(0xff0d9488).withValues(alpha: 0.05)
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(20),
-          border:
-              Border.all(color: const Color(0xff14b8a6).withValues(alpha: 0.2)),
-        ),
         child: Column(
           children: [
-            const Icon(Icons.account_circle_outlined,
-                color: Color(0xff14b8a6), size: 54),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: kPrimaryColor.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.account_circle_outlined,
+                  color: kPrimaryLight, size: 48),
+            ),
             const SizedBox(height: 16),
             Text('#EnaknyaNgekos di KostGo',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 16)),
+                    fontSize: 18)),
             const SizedBox(height: 8),
             Text(
               'Masuk sebagai pencari kos untuk melihat rekomendasi area terdekat, kelola booking, dan promo khusus anak rantau!',
               textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Colors.grey, fontSize: 13, height: 1.4),
+                  .bodyMedium
+                  ?.copyWith(color: Colors.grey, height: 1.5),
             ),
           ],
         ),
@@ -563,32 +555,21 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildCatItem(IconData icon, String label) {
     return InkWell(
       onTap: () => _showInteractionFeedback(context, 'Membuka Kategori $label'),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.all(4.0),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: kCardBg,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4)),
-                ],
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
-              child: Icon(icon, color: const Color(0xff14b8a6), size: 26),
+            buildGlassContainer(
+              radius: 24,
+              padding: const EdgeInsets.all(16),
+              child: Icon(icon, color: kPrimaryLight, size: 28),
             ),
             const SizedBox(height: 10),
             Text(label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: Colors.white70,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500)),
+                    fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -601,17 +582,29 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold)),
+          Row(
+            children: [
+              Container(
+                width: 4,
+                height: 20,
+                decoration: BoxDecoration(
+                  gradient: kPrimaryGradient,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(title,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold)),
+            ],
+          ),
           GestureDetector(
             onTap: onSeeAll,
             child: Text('Lihat Semua',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: kPrimaryColor,
-                    fontSize: 13,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: kPrimaryLight,
                     fontWeight: FontWeight.bold)),
           ),
         ],
@@ -651,18 +644,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Container(
               width: 260,
               margin: const EdgeInsets.only(right: 20),
-              decoration: BoxDecoration(
-                color: const Color(0xff1e1e1e),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.5),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-                border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-              ),
+              decoration: kElevatedCardDecoration(radius: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -907,17 +889,7 @@ class _HomeScreenState extends State<HomeScreen> {
           },
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            decoration: BoxDecoration(
-              color: const Color(0xff1e1e1e),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 4)),
-              ],
-              border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
-            ),
+            decoration: kElevatedCardDecoration(radius: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

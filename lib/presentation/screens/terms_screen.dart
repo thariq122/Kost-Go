@@ -9,7 +9,10 @@ class TermsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kScaffoldBg,
       appBar: AppBar(
-        backgroundColor: kAppBarBg,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: kPrimaryGradient),
+        ),
         elevation: 0,
         title: Text('Syarat & Ketentuan',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -60,8 +63,8 @@ class TermsScreen extends StatelessWidget {
         children: [
           Text(title,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: kPrimaryColor,
-                  fontSize: 14,
+                  color: kPrimaryLight,
+                  fontSize: 15,
                   fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           Text(content,

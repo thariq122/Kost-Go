@@ -18,13 +18,14 @@ class _SplashScreenState extends State<SplashScreen>
   late Animation<double> _logoScaleAnimation;
   late Animation<double> _textFadeAnimation;
   late Animation<double> _textSlideAnimation;
+  late Animation<double> _glowAnimation;
 
   @override
   void initState() {
     super.initState();
 
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 2500),
       vsync: this,
     );
 
@@ -49,6 +50,13 @@ class _SplashScreenState extends State<SplashScreen>
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.5, 1.0, curve: Curves.easeOutCubic),
+      ),
+    );
+
+    _glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.5, 1.0, curve: Curves.easeInOut),
       ),
     );
 
@@ -84,16 +92,64 @@ class _SplashScreenState extends State<SplashScreen>
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
             colors: [
-              Color(0xff1a1a1a),
-              Color(0xff0d0d0d),
+              Color(0xff050505), // Sangat gelap
+              Color(0xff0d2524), // Hint teal
+              Color(0xff050505),
             ],
+            stops: [0.0, 0.5, 1.0],
           ),
         ),
         child: Stack(
           children: [
+            // Particle effect simulation with simple blurred circles
+            Positioned(
+              top: -50,
+              left: -50,
+              child: AnimatedBuilder(
+                animation: _glowAnimation,
+                builder: (context, child) => Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: kPrimaryColor.withValues(alpha: 0.1 * _glowAnimation.value),
+                    boxShadow: [
+                      BoxShadow(
+                        color: kPrimaryColor.withValues(alpha: 0.2 * _glowAnimation.value),
+                        blurRadius: 100,
+                        spreadRadius: 50,
+                      )
+                    ]
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: -50,
+              right: -50,
+              child: AnimatedBuilder(
+                animation: _glowAnimation,
+                builder: (context, child) => Container(
+                  width: 250,
+                  height: 250,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: kAccentColor.withValues(alpha: 0.1 * _glowAnimation.value),
+                    boxShadow: [
+                      BoxShadow(
+                        color: kAccentColor.withValues(alpha: 0.15 * _glowAnimation.value),
+                        blurRadius: 120,
+                        spreadRadius: 60,
+                      )
+                    ]
+                  ),
+                ),
+              ),
+            ),
+
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -104,32 +160,46 @@ class _SplashScreenState extends State<SplashScreen>
                     child: ScaleTransition(
                       scale: _logoScaleAnimation,
                       child: Container(
-                        padding: const EdgeInsets.all(24),
+                        padding: const EdgeInsets.all(28),
                         decoration: BoxDecoration(
-                          color: kCardBg,
-                          borderRadius: BorderRadius.circular(32),
+                          color: Colors.white.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(36),
                           border: Border.all(
-                            color: kPrimaryColor.withValues(alpha: 0.4),
-                            width: 2,
+                            color: Colors.white.withValues(alpha: 0.1),
+                            width: 1,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: kPrimaryColor.withValues(alpha: 0.25),
-                              blurRadius: 40,
-                              spreadRadius: 2,
-                              offset: const Offset(0, 8),
+                              color: kPrimaryColor.withValues(alpha: 0.3),
+                              blurRadius: 50,
+                              spreadRadius: 5,
+                              offset: const Offset(0, 10),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.maps_home_work_rounded,
-                          color: Color(0xff14b8a6),
-                          size: 76,
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: const BoxDecoration(
+                            gradient: kPrimaryGradient,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0x8014b8a6), // fallback constant if needed, but we use primaryColor
+                                blurRadius: 20,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: const Icon(
+                            Icons.maps_home_work_rounded,
+                            color: Colors.white,
+                            size: 64,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 36),
 
                   // Bagian Teks & Tagline
                   AnimatedBuilder(
@@ -152,18 +222,25 @@ class _SplashScreenState extends State<SplashScreen>
                               .headlineLarge
                               ?.copyWith(
                                   color: Colors.white,
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 2.0),
+                                  fontSize: 42,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.5),
                         ),
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 12),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 14, vertical: 6),
+                              horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color:
-                                const Color(0xff14b8a6).withValues(alpha: 0.1),
+                            gradient: LinearGradient(
+                              colors: [
+                                kPrimaryColor.withValues(alpha: 0.2),
+                                kPrimaryColor.withValues(alpha: 0.05),
+                              ],
+                            ),
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: kPrimaryColor.withValues(alpha: 0.3),
+                            ),
                           ),
                           child: Text(
                             '#EnaknyaNgekos',
@@ -171,9 +248,9 @@ class _SplashScreenState extends State<SplashScreen>
                                 .textTheme
                                 .bodySmall
                                 ?.copyWith(
-                                    color: kPrimaryColor,
+                                    color: kPrimaryLight,
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.bold,
                                     letterSpacing: 1.5),
                           ),
                         ),
@@ -186,7 +263,7 @@ class _SplashScreenState extends State<SplashScreen>
 
             // Bagian Keterangan Bawah
             Positioned(
-              bottom: 40,
+              bottom: 50,
               left: 40,
               right: 40,
               child: FadeTransition(
@@ -194,24 +271,24 @@ class _SplashScreenState extends State<SplashScreen>
                 child: Column(
                   children: [
                     SizedBox(
-                      width: 100,
+                      width: 120,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: const LinearProgressIndicator(
-                          minHeight: 2.5,
+                          minHeight: 4,
                           backgroundColor: Colors.white10,
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Color(0xff14b8a6)),
+                              AlwaysStoppedAnimation<Color>(kPrimaryLight),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 24),
                     Text(
                       'Aplikasi Pencarian Kost Terbaik di Indonesia',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.white30,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w400,
+                          color: Colors.white54,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.5),
                     ),
                   ],

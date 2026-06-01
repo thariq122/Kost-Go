@@ -89,45 +89,51 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     ?.copyWith(color: Colors.grey, fontSize: 14, height: 1.5),
               ),
               const SizedBox(height: 40),
-              TextFormField(
-                controller: _controller,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge
-                    ?.copyWith(color: Colors.white),
-                decoration: InputDecoration(
-                  labelText: 'Nomor Handphone / Email',
-                  labelStyle: Theme.of(context)
+              buildGlassContainer(
+                radius: 12,
+                child: TextFormField(
+                  controller: _controller,
+                  style: Theme.of(context)
                       .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.grey),
-                  enabledBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white24)),
-                  focusedBorder: const UnderlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xff14b8a6))),
-                  prefixIcon:
-                      const Icon(Icons.person_outline, color: Colors.grey),
+                      .bodyLarge
+                      ?.copyWith(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Nomor Handphone / Email',
+                    labelStyle: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(color: Colors.grey),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    prefixIcon:
+                        const Icon(Icons.person_outline, color: kPrimaryLight),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Harap isi data Anda';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Harap isi data Anda';
-                  }
-                  return null;
-                },
               ),
               const SizedBox(height: 50),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style:
-                      ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
-                  onPressed: _handleResetPassword,
-                  child: Text('Kirim Instruksi',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16)),
+              InkWell(
+                onTap: _handleResetPassword,
+                borderRadius: BorderRadius.circular(12),
+                child: Ink(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: kPrimaryGradient,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text('Kirim Instruksi',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16)),
+                  ),
                 ),
               ),
             ],

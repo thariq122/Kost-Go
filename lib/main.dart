@@ -27,14 +27,19 @@ class MyApp extends StatelessWidget {
       title: 'KostGo',
       theme: ThemeData(
         brightness: Brightness.dark,
-        fontFamily: 'Roboto',
+        textTheme: kTextTheme,
         primaryColor: kPrimaryColor,
         scaffoldBackgroundColor: kScaffoldBg,
         appBarTheme: const AppBarTheme(
           backgroundColor: kAppBarBg,
           elevation: 0,
+          centerTitle: true,
         ),
-        colorScheme: ColorScheme.dark().copyWith(secondary: kAccentColor),
+        colorScheme: const ColorScheme.dark(
+          primary: kPrimaryColor,
+          secondary: kAccentColor,
+          surface: kCardBg,
+        ),
       ),
       home: const SplashScreen(),
     );

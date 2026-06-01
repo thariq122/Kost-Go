@@ -52,38 +52,78 @@ class DetailKostScreen extends StatelessWidget {
                 Stack(
                   children: [
                     Container(
-                      height: 280,
+                      height: 320, // Taller for better parallax feel
                       width: double.infinity,
                       decoration: const BoxDecoration(
                         color: kCardBg,
-                        borderRadius:
-                            BorderRadius.vertical(bottom: Radius.circular(24)),
                       ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            bottom: Radius.circular(24)),
-                        child: Image.asset(
-                          'assets/images/$foto',
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                              child: Icon(Icons.broken_image_outlined,
-                                  color: Colors.white24, size: 60),
-                            );
-                          },
-                        ),
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          Image.asset(
+                            'assets/images/$foto',
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Center(
+                                child: Icon(Icons.broken_image_outlined,
+                                    color: Colors.white24, size: 60),
+                              );
+                            },
+                          ),
+                          // Premium gradient overlay
+                          Positioned.fill(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    kScaffoldBg.withValues(alpha: 0.6),
+                                    Colors.transparent,
+                                    kScaffoldBg,
+                                  ],
+                                  stops: const [0.0, 0.4, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     Positioned(
                       top: 40,
                       left: 20,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.black.withValues(alpha: 0.6),
-                        child: IconButton(
-                          icon:
-                              const Icon(Icons.arrow_back, color: Colors.white),
-                          onPressed: () => Navigator.pop(context),
-                        ),
+                      right: 20,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          buildGlassContainer(
+                            radius: 20,
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              buildGlassContainer(
+                                radius: 20,
+                                child: IconButton(
+                                  icon: const Icon(Icons.share_outlined, color: Colors.white),
+                                  onPressed: () {},
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              buildGlassContainer(
+                                radius: 20,
+                                child: IconButton(
+                                  icon: const Icon(Icons.favorite_border, color: Colors.white),
+                                  onPressed: () {},
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -331,7 +371,13 @@ class DetailKostScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  color: const Color(0xffdc2626),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color(0xffdc2626), Color(0xff991b1b)],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    )
+                  ),
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                   child: Row(
@@ -339,7 +385,7 @@ class DetailKostScreen extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.bolt, color: Colors.white, size: 16),
+                          const Icon(Icons.bolt, color: Colors.yellowAccent, size: 16),
                           const SizedBox(width: 6),
                           Text(
                             'Diskon Kilat Berlaku ',
@@ -358,24 +404,12 @@ class DetailKostScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
+                buildGlassContainer(
+                  radius: 0,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  decoration: BoxDecoration(
-                    color: kCardBg,
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(20)),
-                    border:
-                        Border.all(color: Colors.white.withValues(alpha: 0.05)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.35),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      )
-                    ],
-                  ),
                   child: SafeArea(
+                    top: false,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -393,7 +427,7 @@ class DetailKostScreen extends StatelessWidget {
                                       .textTheme
                                       .titleMedium
                                       ?.copyWith(
-                                          color: kPrimaryColor,
+                                          color: kPrimaryLight,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
                                 ),
@@ -414,7 +448,7 @@ class DetailKostScreen extends StatelessWidget {
                                   .textTheme
                                   .bodySmall
                                   ?.copyWith(
-                                      color: kPrimaryColor,
+                                      color: Colors.white70,
                                       fontSize: 12,
                                       decoration: TextDecoration.underline),
                             ),
@@ -422,38 +456,45 @@ class DetailKostScreen extends StatelessWidget {
                         ),
                         Row(
                           children: [
-                            OutlinedButton(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                side:
-                                    const BorderSide(color: Color(0xff14b8a6)),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 14),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.2))
                               ),
-                              child: const Icon(Icons.chat_bubble_outline,
-                                  color: Color(0xff14b8a6), size: 18),
+                              child: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(Icons.chat_bubble_outline,
+                                    color: Colors.white, size: 20),
+                              ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 12),
                             ElevatedButton(
                               onPressed: () => _showBookingFeedback(context),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xff14b8a6),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 24, vertical: 14),
+                                padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12)),
                               ),
-                              child: Text(
-                                'Ajukan Sewa',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelLarge
-                                    ?.copyWith(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  gradient: kPrimaryGradient,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 14),
+                                  child: Text(
+                                    'Ajukan Sewa',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -474,26 +515,48 @@ class DetailKostScreen extends StatelessWidget {
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12, top: 4),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+      child: Row(
+        children: [
+          Container(
+            width: 4,
+            height: 18,
+            decoration: BoxDecoration(
+              gradient: kPrimaryGradient,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildInfoRow(BuildContext context, IconData icon, String label) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, color: Colors.grey, size: 18),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: kPrimaryLight, size: 16),
+          ),
           const SizedBox(width: 12),
-          Text(label,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Colors.white70, fontSize: 13)),
+          Expanded(
+            child: Text(label,
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: Colors.white70, fontSize: 13, height: 1.4)),
+          ),
         ],
       ),
     );
@@ -505,7 +568,14 @@ class DetailKostScreen extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white38, size: 16),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.05),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: kAccentLight, size: 14),
+          ),
           const SizedBox(width: 12),
           Expanded(
               child: Text(place,

@@ -9,7 +9,10 @@ class BookingHistoryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: kScaffoldBg, // Dark Background
       appBar: AppBar(
-        backgroundColor: kAppBarBg,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: kPrimaryGradient),
+        ),
         title: Text(
           'Riwayat Booking',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -60,19 +63,7 @@ class BookingHistoryScreen extends StatelessWidget {
   }) {
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: kCardBg,
-        borderRadius: BorderRadius.circular(16),
-        border:
-            Border.all(width: 0.5, color: Colors.grey.withValues(alpha: 0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.35),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          )
-        ],
-      ),
+      decoration: kElevatedCardDecoration(radius: 16),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

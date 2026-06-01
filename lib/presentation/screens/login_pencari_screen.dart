@@ -88,16 +88,14 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
               Center(
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 24),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: kCardBg,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: kPrimaryColor, width: 1.5),
-                  ),
-                  child: const Icon(
-                    Icons.home_work_rounded,
-                    size: 60,
-                    color: Color(0xff14b8a6),
+                  child: buildGlassContainer(
+                    radius: 50,
+                    padding: const EdgeInsets.all(20),
+                    child: const Icon(
+                      Icons.home_work_rounded,
+                      size: 60,
+                      color: kPrimaryLight,
+                    ),
                   ),
                 ),
               ),
@@ -166,33 +164,33 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
               const SizedBox(height: 35),
 
               // Tombol Login
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: authProvider.isLoading ? null : _submitLogin,
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimaryColor,
-                      disabledBackgroundColor:
-                          kPrimaryColor.withValues(alpha: 0.5)),
-                  child: authProvider.isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            color: Colors.black,
-                            strokeWidth: 2,
+              InkWell(
+                onTap: authProvider.isLoading ? null : _submitLogin,
+                borderRadius: BorderRadius.circular(12),
+                child: Ink(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: authProvider.isLoading ? null : kPrimaryGradient,
+                    color: authProvider.isLoading ? Colors.white24 : null,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: authProvider.isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            'Login',
+                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: Colors.white, fontWeight: FontWeight.bold),
                           ),
-                        )
-                      : Text(
-                          'Login',
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelLarge
-                              ?.copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                        ),
+                  ),
                 ),
               ),
               const SizedBox(height: 40),
@@ -241,28 +239,23 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
     required String? Function(String?) validator,
     bool isPass = false,
   }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: isPass,
-      validator: validator,
-      style:
-          Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
-        enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white24)),
-        focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0xff14b8a6))),
-        errorStyle: Theme.of(context)
-            .textTheme
-            .bodySmall
-            ?.copyWith(color: Colors.redAccent),
-        focusedErrorBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.redAccent)),
-        errorBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.redAccent)),
+    return buildGlassContainer(
+      radius: 12,
+      child: TextFormField(
+        controller: controller,
+        obscureText: isPass,
+        validator: validator,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          errorStyle: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(color: Colors.redAccent),
+        ),
       ),
     );
   }

@@ -28,16 +28,14 @@ class LoginPemilikScreen extends StatelessWidget {
             Center(
               child: Container(
                 margin: const EdgeInsets.only(bottom: 24),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: kCardBg,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: kPrimaryColor, width: 1.5),
-                ),
-                child: const Icon(
-                  Icons.home_work_rounded,
-                  size: 60,
-                  color: Color(0xff14b8a6),
+                child: buildGlassContainer(
+                  radius: 50,
+                  padding: const EdgeInsets.all(20),
+                  child: const Icon(
+                    Icons.home_work_rounded,
+                    size: 60,
+                    color: kPrimaryLight,
+                  ),
                 ),
               ),
             ),
@@ -78,18 +76,24 @@ class LoginPemilikScreen extends StatelessWidget {
             ),
             const SizedBox(height: 35),
 
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
-                  // TODO: Tambahkan aksi logika login pemilik jika backend ready
-                },
-                style: ElevatedButton.styleFrom(backgroundColor: kPrimaryColor),
-                child: Text(
-                  'Login',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Colors.black, fontWeight: FontWeight.bold),
+            InkWell(
+              onTap: () {
+                // TODO: Tambahkan aksi logika login pemilik jika backend ready
+              },
+              borderRadius: BorderRadius.circular(12),
+              child: Ink(
+                height: 50,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: kPrimaryGradient,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(
+                  child: Text(
+                    'Login',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ),
@@ -132,18 +136,17 @@ class LoginPemilikScreen extends StatelessWidget {
 
   Widget _buildTextField(BuildContext context, String label,
       {bool isPass = false}) {
-    return TextField(
-      obscureText: isPass,
-      style:
-          Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.white),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
-        enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.white24)),
-        focusedBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Color(0xff14b8a6))),
+    return buildGlassContainer(
+      radius: 12,
+      child: TextField(
+        obscureText: isPass,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        ),
       ),
     );
   }

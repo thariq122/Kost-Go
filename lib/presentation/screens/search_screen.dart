@@ -23,7 +23,12 @@ class _SearchScreenState extends State<SearchScreen>
       'tipe': 'Campur',
       'lokasi': 'Coblong, Bandung (Dekat UNPAD/ITB)',
       'fasilitas': 'K. Mandi Dalam • WiFi • AC • Kasur',
-      'rating': '4.8'
+      'rating': '4.8',
+      'foto': 'Kos1.png',
+      'ukuranKamar': '3x4 meter',
+      'lokasiLengkap': 'Jl. Dipatiukur, Bandung',
+      'fasilitasKamar': ['WiFi', 'AC'],
+      'tempatTerdekat': [{'nama': 'UNPAD', 'jarak': '1km'}],
     },
     {
       'nama': 'Kost Jatinangor Heritage',
@@ -31,7 +36,12 @@ class _SearchScreenState extends State<SearchScreen>
       'tipe': 'Putri',
       'lokasi': 'Sumedang, Bandung Core (Dekat UNPAD)',
       'fasilitas': 'WiFi • Kamar Mandi Dalam • Kasur',
-      'rating': '4.5'
+      'rating': '4.5',
+      'foto': 'Kos2.png',
+      'ukuranKamar': '3x3 meter',
+      'lokasiLengkap': 'Jl. Raya Jatinangor',
+      'fasilitasKamar': ['WiFi'],
+      'tempatTerdekat': [{'nama': 'ITB Jatinangor', 'jarak': '2km'}],
     },
     {
       'nama': 'Kost Exclusive Dago Ganesha',
@@ -39,7 +49,12 @@ class _SearchScreenState extends State<SearchScreen>
       'tipe': 'Putra',
       'lokasi': 'Dago, Bandung (Dekat ITB)',
       'fasilitas': 'K. Mandi Dalam • Water Heater • WiFi • AC',
-      'rating': '5.0'
+      'rating': '5.0',
+      'foto': 'Kos3.png',
+      'ukuranKamar': '4x4 meter',
+      'lokasiLengkap': 'Jl. Dago Asri',
+      'fasilitasKamar': ['WiFi', 'Water Heater'],
+      'tempatTerdekat': [{'nama': 'ITB Ganesha', 'jarak': '500m'}],
     },
   ];
 
@@ -93,18 +108,18 @@ class _SearchScreenState extends State<SearchScreen>
     return Scaffold(
       backgroundColor: kScaffoldBg,
       appBar: AppBar(
-        backgroundColor: kAppBarBg,
+        backgroundColor: Colors.transparent,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(gradient: kPrimaryGradient),
+        ),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Container(
+        title: buildGlassContainer(
+          radius: 12,
           height: 45,
-          decoration: BoxDecoration(
-            color: kScaffoldBg,
-            borderRadius: BorderRadius.circular(12),
-          ),
           child: TextField(
             controller: _searchController,
             autofocus: true,
@@ -118,13 +133,13 @@ class _SearchScreenState extends State<SearchScreen>
               hintStyle: Theme.of(context)
                   .textTheme
                   .bodySmall
-                  ?.copyWith(color: Colors.grey, fontSize: 13),
+                  ?.copyWith(color: Colors.white60, fontSize: 13),
               prefixIcon:
-                  const Icon(Icons.search, color: Color(0xff14b8a6), size: 20),
+                  const Icon(Icons.search, color: kPrimaryLight, size: 20),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
                       icon:
-                          const Icon(Icons.clear, color: Colors.grey, size: 18),
+                          const Icon(Icons.clear, color: Colors.white70, size: 18),
                       onPressed: () {
                         _searchController.clear();
                         _onSearchChanged('');
@@ -170,11 +185,11 @@ class _SearchScreenState extends State<SearchScreen>
           ),
           const Divider(color: Colors.white10, height: 1),
           Container(
-            color: const Color(0xff1e1e1e),
+            color: kCardBg,
             child: TabBar(
               controller: _tabController,
-              indicatorColor: kPrimaryColor,
-              labelColor: kPrimaryColor,
+              indicatorColor: kPrimaryLight,
+              labelColor: kPrimaryLight,
               unselectedLabelColor: Colors.grey,
               labelStyle: Theme.of(context)
                   .textTheme
@@ -211,10 +226,10 @@ class _SearchScreenState extends State<SearchScreen>
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xff1e1e1e),
+                          color: kCardBg,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.05)),
+                              color: Colors.white.withValues(alpha: 0.1)),
                         ),
                         child: Text(
                           campus,
@@ -322,7 +337,7 @@ class _SearchScreenState extends State<SearchScreen>
         final kost = _filteredResult[index];
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
-          decoration: kCardDecoration(radius: 16),
+          decoration: kElevatedCardDecoration(radius: 16),
           child: ListTile(
             contentPadding: const EdgeInsets.all(12),
             leading: Container(

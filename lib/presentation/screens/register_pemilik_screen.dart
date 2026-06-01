@@ -200,31 +200,33 @@ class _RegisterPemilikScreenState extends State<RegisterPemilikScreen> {
                   ],
                 ),
                 const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: kPrimaryColor,
-                      disabledBackgroundColor: Colors.grey[800],
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                InkWell(
+                  onTap: authProvider.isLoading ? null : _handleRegister,
+                  borderRadius: BorderRadius.circular(12),
+                  child: Ink(
+                    height: 50,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: authProvider.isLoading ? null : kPrimaryGradient,
+                      color: authProvider.isLoading ? Colors.white24 : null,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    onPressed: authProvider.isLoading ? null : _handleRegister,
-                    child: authProvider.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                                color: Colors.white, strokeWidth: 2))
-                        : Text('Daftar',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold)),
+                    child: Center(
+                      child: authProvider.isLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white, strokeWidth: 2))
+                          : Text('Daftar',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
+                    ),
                   ),
                 ),
               ],
@@ -247,40 +249,35 @@ class _RegisterPemilikScreenState extends State<RegisterPemilikScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500)),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge
-              ?.copyWith(color: Colors.white, fontSize: 14),
-          decoration: InputDecoration(
-            hintText: placeholder,
-            hintStyle: Theme.of(context)
+        buildGlassContainer(
+          radius: 12,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            style: Theme.of(context)
                 .textTheme
-                .bodySmall
-                ?.copyWith(color: Colors.grey[600], fontSize: 13),
-            filled: true,
-            fillColor: kCardBg,
-            prefixIcon: Icon(icon, color: Colors.grey[400], size: 20),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: Color(0xff14b8a6), width: 1)),
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                .bodyLarge
+                ?.copyWith(color: Colors.white, fontSize: 14),
+            decoration: InputDecoration(
+              hintText: placeholder,
+              hintStyle: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Colors.grey[600], fontSize: 13),
+              prefixIcon: Icon(icon, color: kPrimaryLight, size: 20),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return '$label tidak boleh kosong';
+              }
+              if (label == 'Email' && !value.contains('@')) {
+                return 'Format email salah';
+              }
+              return null;
+            },
           ),
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return '$label tidak boleh kosong';
-            }
-            if (label == 'Email' && !value.contains('@')) {
-              return 'Format email salah';
-            }
-            return null;
-          },
         ),
       ],
     );
@@ -303,49 +300,44 @@ class _RegisterPemilikScreenState extends State<RegisterPemilikScreen> {
                 fontSize: 14,
                 fontWeight: FontWeight.w500)),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          obscureText: obscure,
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge
-              ?.copyWith(color: Colors.white, fontSize: 14),
-          decoration: InputDecoration(
-            hintText: placeholder,
-            hintStyle: Theme.of(context)
+        buildGlassContainer(
+          radius: 12,
+          child: TextFormField(
+            controller: controller,
+            obscureText: obscure,
+            style: Theme.of(context)
                 .textTheme
-                .bodySmall
-                ?.copyWith(color: Colors.grey[600], fontSize: 13),
-            filled: true,
-            fillColor: kCardBg,
-            prefixIcon:
-                Icon(Icons.lock_outline, color: Colors.grey[400], size: 20),
-            suffixIcon: IconButton(
-              icon: Icon(obscure ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.grey[400], size: 20),
-              onPressed: toggleObscure,
+                .bodyLarge
+                ?.copyWith(color: Colors.white, fontSize: 14),
+            decoration: InputDecoration(
+              hintText: placeholder,
+              hintStyle: Theme.of(context)
+                  .textTheme
+                  .bodySmall
+                  ?.copyWith(color: Colors.grey[600], fontSize: 13),
+              prefixIcon:
+                  Icon(Icons.lock_outline, color: kPrimaryLight, size: 20),
+              suffixIcon: IconButton(
+                icon: Icon(obscure ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.grey[400], size: 20),
+                onPressed: toggleObscure,
+              ),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: Color(0xff14b8a6), width: 1)),
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return '$label tidak boleh kosong';
+              }
+              if (!isConfirmField && value.length < 8) {
+                return 'Password minimal harus 8 karakter';
+              }
+              if (isConfirmField && value != _passwordController.text) {
+                return 'Konfirmasi password tidak cocok';
+              }
+              return null;
+            },
           ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return '$label tidak boleh kosong';
-            }
-            if (!isConfirmField && value.length < 8) {
-              return 'Password minimal harus 8 karakter';
-            }
-            if (isConfirmField && value != _passwordController.text) {
-              return 'Konfirmasi password tidak cocok';
-            }
-            return null;
-          },
         ),
       ],
     );

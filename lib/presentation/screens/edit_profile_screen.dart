@@ -119,7 +119,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           : null,
                       child: _webImageBytes == null
                           ? const Icon(Icons.person,
-                              size: 50, color: Colors.tealAccent)
+                              size: 50, color: kPrimaryLight)
                           : null,
                     ),
                     Positioned(
@@ -127,11 +127,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       right: 0,
                       child: CircleAvatar(
                         radius: 16,
-                        backgroundColor: kPrimaryColor,
+                        backgroundColor: kPrimaryLight,
                         child: IconButton(
                           padding: EdgeInsets.zero,
                           icon: const Icon(Icons.camera_alt,
-                              size: 16, color: Colors.white),
+                              size: 16, color: Colors.black),
                           // Di web, fungsi picker pilihan dihapus, langsung panggil _pickImage
                           onPressed: _pickImage,
                         ),
@@ -154,21 +154,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   keyboardType: TextInputType.phone),
               const SizedBox(height: 40),
 
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kPrimaryColor,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+              InkWell(
+                onTap: _saveProfile,
+                borderRadius: BorderRadius.circular(12),
+                child: Ink(
+                  height: 50,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: kPrimaryGradient,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  onPressed: _saveProfile,
-                  child: Text('Simpan Perubahan',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold)),
+                  child: Center(
+                    child: Text('Simpan Perubahan',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold)),
+                  ),
                 ),
               ),
             ],
@@ -187,33 +189,27 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         Text(label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Colors.grey, fontSize: 12, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          style: Theme.of(context)
-              .textTheme
-              .bodyLarge
-              ?.copyWith(color: Colors.white, fontSize: 14),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: kCardBg,
-            prefixIcon: Icon(icon, color: Colors.grey[400], size: 20),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none),
-            focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: Color(0xff14b8a6), width: 1)),
-            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+        buildGlassContainer(
+          radius: 12,
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            style: Theme.of(context)
+                .textTheme
+                .bodyLarge
+                ?.copyWith(color: Colors.white, fontSize: 14),
+            decoration: InputDecoration(
+              prefixIcon: Icon(icon, color: kPrimaryLight, size: 20),
+              border: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            ),
+            validator: (value) {
+              if (value == null || value.trim().isEmpty) {
+                return '$label tidak boleh kosong';
+              }
+              return null;
+            },
           ),
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return '$label tidak boleh kosong';
-            }
-            return null;
-          },
         ),
       ],
     );
