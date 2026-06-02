@@ -25,16 +25,17 @@ class LoginPemilikScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Logo Aplikasi Berbingkai Teal (Seragam)
             Center(
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 24),
-                child: buildGlassContainer(
-                  radius: 50,
-                  padding: const EdgeInsets.all(20),
-                  child: const Icon(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: Image.asset(
+                  'assets/images/LogoKostGo.png',
+                  width: 130,
+                  height: 130,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
                     Icons.home_work_rounded,
-                    size: 60,
+                    size: 90,
                     color: kPrimaryLight,
                   ),
                 ),

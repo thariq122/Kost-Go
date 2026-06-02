@@ -114,16 +114,17 @@ class _SplashScreenState extends State<SplashScreen>
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: kPrimaryColor.withValues(alpha: 0.1 * _glowAnimation.value),
-                    boxShadow: [
-                      BoxShadow(
-                        color: kPrimaryColor.withValues(alpha: 0.2 * _glowAnimation.value),
-                        blurRadius: 100,
-                        spreadRadius: 50,
-                      )
-                    ]
-                  ),
+                      shape: BoxShape.circle,
+                      color: kPrimaryColor.withValues(
+                          alpha: 0.1 * _glowAnimation.value),
+                      boxShadow: [
+                        BoxShadow(
+                          color: kPrimaryColor.withValues(
+                              alpha: 0.2 * _glowAnimation.value),
+                          blurRadius: 100,
+                          spreadRadius: 50,
+                        )
+                      ]),
                 ),
               ),
             ),
@@ -136,16 +137,17 @@ class _SplashScreenState extends State<SplashScreen>
                   width: 250,
                   height: 250,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: kAccentColor.withValues(alpha: 0.1 * _glowAnimation.value),
-                    boxShadow: [
-                      BoxShadow(
-                        color: kAccentColor.withValues(alpha: 0.15 * _glowAnimation.value),
-                        blurRadius: 120,
-                        spreadRadius: 60,
-                      )
-                    ]
-                  ),
+                      shape: BoxShape.circle,
+                      color: kAccentColor.withValues(
+                          alpha: 0.1 * _glowAnimation.value),
+                      boxShadow: [
+                        BoxShadow(
+                          color: kAccentColor.withValues(
+                              alpha: 0.15 * _glowAnimation.value),
+                          blurRadius: 120,
+                          spreadRadius: 60,
+                        )
+                      ]),
                 ),
               ),
             ),
@@ -159,42 +161,16 @@ class _SplashScreenState extends State<SplashScreen>
                     opacity: _logoFadeAnimation,
                     child: ScaleTransition(
                       scale: _logoScaleAnimation,
-                      child: Container(
-                        padding: const EdgeInsets.all(28),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.05),
-                          borderRadius: BorderRadius.circular(36),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            width: 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: kPrimaryColor.withValues(alpha: 0.3),
-                              blurRadius: 50,
-                              spreadRadius: 5,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: const BoxDecoration(
-                            gradient: kPrimaryGradient,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0x8014b8a6), // fallback constant if needed, but we use primaryColor
-                                blurRadius: 20,
-                                offset: Offset(0, 5),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.maps_home_work_rounded,
-                            color: Colors.white,
-                            size: 64,
-                          ),
+                      child: Image.asset(
+                        'assets/images/LogoKostGo.png',
+                        width: 160,
+                        height: 160,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                          Icons.maps_home_work_rounded,
+                          color: Colors.white,
+                          size: 160,
                         ),
                       ),
                     ),

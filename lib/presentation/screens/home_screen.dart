@@ -314,16 +314,15 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: kCardBg,
-                  borderRadius: BorderRadius.circular(12),
-                  border:
-                      Border.all(color: kPrimaryColor.withValues(alpha: 0.3)),
-                ),
-                child: const Icon(Icons.maps_home_work,
-                    color: Color(0xff14b8a6), size: 24),
+              Image.asset(
+                'assets/images/LogoKostGo.png',
+                width: 60,
+                height: 60,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.maps_home_work,
+                    color: Color(0xff14b8a6),
+                    size: 36),
               ),
               const SizedBox(width: 12),
               Text(

@@ -86,14 +86,16 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
             children: [
               // Logo Aplikasi
               Center(
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 24),
-                  child: buildGlassContainer(
-                    radius: 50,
-                    padding: const EdgeInsets.all(20),
-                    child: const Icon(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: Image.asset(
+                    'assets/images/LogoKostGo.png',
+                    width: 130,
+                    height: 130,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
                       Icons.home_work_rounded,
-                      size: 60,
+                      size: 90,
                       color: kPrimaryLight,
                     ),
                   ),
@@ -187,8 +189,12 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
                           )
                         : Text(
                             'Login',
-                            style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                                color: Colors.white, fontWeight: FontWeight.bold),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                           ),
                   ),
                 ),
@@ -245,12 +251,19 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
         controller: controller,
         obscureText: isPass,
         validator: validator,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white),
+        style: Theme.of(context)
+            .textTheme
+            .bodyMedium
+            ?.copyWith(color: Colors.white),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey),
+          labelStyle: Theme.of(context)
+              .textTheme
+              .bodySmall
+              ?.copyWith(color: Colors.grey),
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           errorStyle: Theme.of(context)
               .textTheme
               .bodySmall
