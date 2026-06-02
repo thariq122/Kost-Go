@@ -1,6 +1,6 @@
-# kostgo
+# KostGo
 
-A new Flutter project.
+Tugas Besar Pemograman Mobile
 
 ## Getting Started
 
