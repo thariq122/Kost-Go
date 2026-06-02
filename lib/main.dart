@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'KostGo Bro',
+      title: 'KostGo',
       theme: ThemeData(
         brightness: Brightness.dark,
         textTheme: kTextTheme,
