@@ -1,4 +1,4 @@
-# Kostgo
+# KostGo
 
 Tugas Besar Pemograman Mobile
 
