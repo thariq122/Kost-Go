@@ -1,15 +1,99 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 import 'ui_helpers.dart';
 
-class MapScreen extends StatelessWidget {
+class MapScreen extends StatefulWidget {
   final String namaKost;
   final String lokasiKost;
 
   const MapScreen({
     super.key,
-    this.namaKost = "Kost Dipatiukur Regensi Tipe A",
-    this.lokasiKost = "Coblong, Bandung (Dekat UNPAD/ITB)",
+    this.namaKost = 'Kost Dipatiukur Regensi Tipe A',
+    this.lokasiKost = 'Coblong, Bandung (Dekat UNPAD/ITB)',
   });
+
+  @override
+  State<MapScreen> createState() => _MapScreenState();
+}
+
+class _MapScreenState extends State<MapScreen> {
+  GoogleMapController? _mapController;
+  bool _isLoading = true;
+  bool _locationPermissionGranted = false;
+
+  // Koordinat default: Bandung
+  static const LatLng _defaultLocation = LatLng(-6.9175, 107.6191);
+
+  late LatLng _kostLocation;
+  Set<Marker> _markers = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _kostLocation = _defaultLocation;
+    _setupMarker();
+    _requestLocationPermission();
+  }
+
+  void _setupMarker() {
+    _markers = {
+      Marker(
+        markerId: const MarkerId('kost_location'),
+        position: _kostLocation,
+        infoWindow: InfoWindow(
+          title: widget.namaKost,
+          snippet: widget.lokasiKost,
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      ),
+    };
+  }
+
+  Future<void> _requestLocationPermission() async {
+    try {
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+      }
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        setState(() => _locationPermissionGranted = true);
+      }
+    } catch (_) {
+      // Permission gagal — lanjut tanpa lokasi user
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+    // Dark style untuk map agar sesuai tema gelap aplikasi
+    _mapController?.setMapStyle(_darkMapStyle);
+    // Animasi kamera ke lokasi kos
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: _kostLocation, zoom: 15.5),
+        ),
+      );
+    });
+  }
+
+  void _goToKostLocation() {
+    _mapController?.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(target: _kostLocation, zoom: 16),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +110,14 @@ class MapScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Lokasi Kos (KostGo Maps)',
+              'Lokasi Kos',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.bold),
             ),
             Text(
-              namaKost,
+              widget.namaKost,
               style: Theme.of(context)
                   .textTheme
                   .bodySmall
@@ -46,66 +130,33 @@ class MapScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          // 1. WIDGET PETA INTERAKTIF
-          Center(
-            child: InteractiveViewer(
-              clipBehavior: Clip.none,
-              maxScale: 5.0,
-              minScale: 1.0,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Image.network(
-                    'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/15/26176/16606.png',
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: double.infinity,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(
-                        child:
-                            CircularProgressIndicator(color: Color(0xff14b8a6)),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        decoration: kCardDecoration(radius: 12),
-                        child: const Center(
-                          child:
-                              Icon(Icons.map, color: Colors.white10, size: 80),
-                        ),
-                      );
-                    },
-                  ),
-
-                  // Pin Lokasi Kost Melayang
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xff14b8a6).withValues(alpha: 0.2),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.location_on_rounded,
-                          color: Color(0xff14b8a6),
-                          size: 42,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                    ],
-                  ),
-                ],
+          // Google Maps
+          if (_isLoading)
+            Container(
+              color: kScaffoldBg,
+              child: const Center(
+                child: CircularProgressIndicator(color: kPrimaryColor),
               ),
+            )
+          else
+            GoogleMap(
+              onMapCreated: _onMapCreated,
+              initialCameraPosition: CameraPosition(
+                target: _kostLocation,
+                zoom: 15,
+              ),
+              markers: _markers,
+              myLocationEnabled: _locationPermissionGranted,
+              myLocationButtonEnabled: false,
+              mapToolbarEnabled: false,
+              zoomControlsEnabled: false,
+              compassEnabled: true,
+              mapType: MapType.normal,
             ),
-          ),
 
-          // 2. KARTU INFORMASI ALAMAT MELAYANG (SUDAH DINAIKKAN AGAR TIDAK KETUTUP NAVIGASI)
+          // Kartu info lokasi bawah
           Positioned(
-            bottom:
-                100, // <--- DIUBAH KE 100 BIAR POSISINYA NAIK DAN KELIHATAN JELAS
+            bottom: 100,
             left: 20,
             right: 20,
             child: Container(
@@ -116,11 +167,11 @@ class MapScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: kScaffoldBg,
+                      color: kPrimaryColor.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(Icons.maps_home_work,
-                        color: Color(0xff14b8a6), size: 24),
+                        color: kPrimaryLight, size: 24),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
@@ -129,24 +180,24 @@ class MapScreen extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          namaKost,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14),
+                          widget.namaKost,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          lokasiKost,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.grey, fontSize: 12),
+                          widget.lokasiKost,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -158,26 +209,27 @@ class MapScreen extends StatelessWidget {
             ),
           ),
 
-          // Petunjuk Kecil
+          // Tombol kembali ke lokasi kos
           Positioned(
-            top: 12,
-            left: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.pinch, color: Colors.white, size: 14),
-                  const SizedBox(width: 6),
-                  Text('Cubit untuk zoom peta',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Colors.white, fontSize: 11)),
-                ],
+            bottom: 180,
+            right: 20,
+            child: GestureDetector(
+              onTap: _goToKostLocation,
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: kPrimaryGradient,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: kPrimaryColor.withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: const Icon(Icons.my_location_rounded,
+                    color: Colors.white, size: 22),
               ),
             ),
           ),
@@ -186,3 +238,29 @@ class MapScreen extends StatelessWidget {
     );
   }
 }
+
+// Dark map style JSON agar sesuai tema gelap aplikasi
+const String _darkMapStyle = '''
+[
+  {"elementType": "geometry", "stylers": [{"color": "#212121"}]},
+  {"elementType": "labels.icon", "stylers": [{"visibility": "off"}]},
+  {"elementType": "labels.text.fill", "stylers": [{"color": "#757575"}]},
+  {"elementType": "labels.text.stroke", "stylers": [{"color": "#212121"}]},
+  {"featureType": "administrative", "elementType": "geometry", "stylers": [{"color": "#757575"}]},
+  {"featureType": "administrative.country", "elementType": "labels.text.fill", "stylers": [{"color": "#9e9e9e"}]},
+  {"featureType": "administrative.locality", "elementType": "labels.text.fill", "stylers": [{"color": "#bdbdbd"}]},
+  {"featureType": "poi", "elementType": "labels.text.fill", "stylers": [{"color": "#757575"}]},
+  {"featureType": "poi.park", "elementType": "geometry", "stylers": [{"color": "#181818"}]},
+  {"featureType": "poi.park", "elementType": "labels.text.fill", "stylers": [{"color": "#616161"}]},
+  {"featureType": "poi.park", "elementType": "labels.text.stroke", "stylers": [{"color": "#1b1b1b"}]},
+  {"featureType": "road", "elementType": "geometry.fill", "stylers": [{"color": "#2c2c2c"}]},
+  {"featureType": "road", "elementType": "labels.text.fill", "stylers": [{"color": "#8a8a8a"}]},
+  {"featureType": "road.arterial", "elementType": "geometry", "stylers": [{"color": "#373737"}]},
+  {"featureType": "road.highway", "elementType": "geometry", "stylers": [{"color": "#3c3c3c"}]},
+  {"featureType": "road.highway.controlled_access", "elementType": "geometry", "stylers": [{"color": "#4e4e4e"}]},
+  {"featureType": "road.local", "elementType": "labels.text.fill", "stylers": [{"color": "#616161"}]},
+  {"featureType": "transit", "elementType": "labels.text.fill", "stylers": [{"color": "#757575"}]},
+  {"featureType": "water", "elementType": "geometry", "stylers": [{"color": "#000000"}]},
+  {"featureType": "water", "elementType": "labels.text.fill", "stylers": [{"color": "#3d3d3d"}]}
+]
+''';
