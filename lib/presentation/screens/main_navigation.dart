@@ -88,8 +88,7 @@ class _MainNavigationState extends State<MainNavigation> {
                   onPressed: () {
                     Navigator.pop(context); // Tutup dialog
                     setState(() {
-                      _selectedIndex =
-                          3; // Alihkan otomatis ke tab 'Masuk/Profil'
+                      _selectedIndex = 4; // Tab Masuk/Profil ada di index 4
                     });
                   },
                   child: Ink(

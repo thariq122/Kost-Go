@@ -175,7 +175,7 @@ class _SplashScreenState extends State<SplashScreen>
                       ),
                     ),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 12),
 
                   // Bagian Teks & Tagline
                   AnimatedBuilder(
