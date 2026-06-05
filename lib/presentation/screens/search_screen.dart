@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'detail_kost_screen.dart';
+import 'all_kost_screen.dart';
 import 'ui_helpers.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -9,97 +10,133 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen>
-    with SingleTickerProviderStateMixin {
+class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
-  late TabController _tabController;
   bool _isSearching = false;
 
-  // Data Mock kos khusus area Bandung
-  final List<Map<String, dynamic>> _kostBandungData = [
+  final List<Map<String, dynamic>> _allKost = [
     {
-      'nama': 'Kost Dipatiukur Regensi Tipe A',
-      'harga': 'Rp 1.500.000',
+      'nama': 'Kost Wisma Serasi Tipe A',
+      'lokasi': 'Serpong, Tangerang',
+      'harga': 'Rp 1.431.500',
       'tipe': 'Campur',
-      'lokasi': 'Coblong, Bandung (Dekat UNPAD/ITB)',
-      'fasilitas': 'K. Mandi Dalam • WiFi • AC • Kasur',
-      'rating': '4.8',
+      'rating': '4.6',
       'foto': 'Kos1.png',
       'ukuranKamar': '3x4 meter',
-      'lokasiLengkap': 'Jl. Dipatiukur, Bandung',
-      'fasilitasKamar': ['WiFi', 'AC'],
-      'tempatTerdekat': [{'nama': 'UNPAD', 'jarak': '1km'}],
+      'lokasiLengkap': 'Jl. Serpong Raya No.12, Serpong, Tangerang, Banten',
+      'fasilitasKamar': [
+        'WiFi Gratis',
+        'Kasur Springbed',
+        'Lemari Pakaian',
+        'AC 1/2 PK'
+      ],
+      'tempatTerdekat': [
+        {'nama': 'Stasiun Serpong', 'jarak': '10m'},
+        {'nama': 'Pasar Modern Serpong', 'jarak': '400m'},
+      ],
     },
     {
-      'nama': 'Kost Jatinangor Heritage',
-      'harga': 'Rp 1.200.000',
-      'tipe': 'Putri',
-      'lokasi': 'Sumedang, Bandung Core (Dekat UNPAD)',
-      'fasilitas': 'WiFi • Kamar Mandi Dalam • Kasur',
-      'rating': '4.5',
+      'nama': 'Pondok Gusgas 2',
+      'lokasi': 'Cibiru, Kab. Bandung',
+      'harga': 'Rp 850.000',
+      'tipe': 'Putra',
+      'rating': '4.8',
       'foto': 'Kos2.png',
       'ukuranKamar': '3x3 meter',
-      'lokasiLengkap': 'Jl. Raya Jatinangor',
-      'fasilitasKamar': ['WiFi'],
-      'tempatTerdekat': [{'nama': 'ITB Jatinangor', 'jarak': '2km'}],
+      'lokasiLengkap':
+          'Jl. Cibiru Indah No.45, Cibiru, Kab. Bandung, Jawa Barat',
+      'fasilitasKamar': [
+        'WiFi Koridor',
+        'Kasur Busa',
+        'Lemari Kayu',
+        'Meja Belajar'
+      ],
+      'tempatTerdekat': [
+        {'nama': 'Kampus UIN Bandung', 'jarak': '500m'},
+        {'nama': 'Borma Cibiru', 'jarak': '800m'},
+      ],
     },
     {
-      'nama': 'Kost Exclusive Dago Ganesha',
-      'harga': 'Rp 2.500.000',
-      'tipe': 'Putra',
-      'lokasi': 'Dago, Bandung (Dekat ITB)',
-      'fasilitas': 'K. Mandi Dalam • Water Heater • WiFi • AC',
-      'rating': '5.0',
+      'nama': 'Pondok Priangan 1',
+      'lokasi': 'Cibiru, Kab. Bandung',
+      'harga': 'Rp 900.000',
+      'tipe': 'Putri',
+      'rating': '4.5',
       'foto': 'Kos3.png',
+      'ukuranKamar': '3.5x3.5 meter',
+      'lokasiLengkap':
+          'Cileunyi-Cibiru Blok C No.3, Cibiru, Kab. Bandung, Jawa Barat',
+      'fasilitasKamar': [
+        'Kamar Mandi Dalam',
+        'WiFi Fast',
+        'Kasur Kapuk',
+        'Gantungan Baju'
+      ],
+      'tempatTerdekat': [
+        {'nama': 'Bundaran Cibiru', 'jarak': '300m'},
+        {'nama': 'Polda Jabar', 'jarak': '1.2km'},
+      ],
+    },
+    {
+      'nama': 'Pondok Priangan 2',
+      'lokasi': 'Cibiru, Kab. Bandung',
+      'harga': 'Rp 950.000',
+      'tipe': 'Campur',
+      'rating': '4.7',
+      'foto': 'kos4.png',
       'ukuranKamar': '4x4 meter',
-      'lokasiLengkap': 'Jl. Dago Asri',
-      'fasilitasKamar': ['WiFi', 'Water Heater'],
-      'tempatTerdekat': [{'nama': 'ITB Ganesha', 'jarak': '500m'}],
+      'lokasiLengkap':
+          'Samping Gang Priangan No.88, Cibiru, Kab. Bandung, Jawa Barat',
+      'fasilitasKamar': [
+        'AC Dingin',
+        'Kamar Mandi Shower',
+        'Kasur King Size',
+        'WiFi 5G'
+      ],
+      'tempatTerdekat': [
+        {'nama': 'Stasiun Cimekar', 'jarak': '2.5km'},
+        {'nama': 'Warteg Priangan', 'jarak': '50m'},
+      ],
     },
   ];
 
   List<Map<String, dynamic>> _filteredResult = [];
 
-  final List<String> _popularCampuses = [
-    'ITB',
-    'UNPAD Jatinangor',
-    'UPI Bandung',
-    'Telkom University',
-    'UNPAS',
-    'UNISBA'
-  ];
-
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _filteredResult = _kostBandungData;
+    _filteredResult = _allKost;
   }
 
   void _onSearchChanged(String query) {
     setState(() {
       _isSearching = query.isNotEmpty;
       if (query.isEmpty) {
-        _filteredResult = _kostBandungData;
+        _filteredResult = _allKost;
       } else {
-        _filteredResult = _kostBandungData
+        _filteredResult = _allKost
             .where((kost) =>
-                kost['nama'].toLowerCase().contains(query.toLowerCase()) ||
-                kost['lokasi'].toLowerCase().contains(query.toLowerCase()))
+                (kost['nama'] as String)
+                    .toLowerCase()
+                    .contains(query.toLowerCase()) ||
+                (kost['lokasi'] as String)
+                    .toLowerCase()
+                    .contains(query.toLowerCase()))
             .toList();
       }
     });
   }
 
-  void _searchWithKeyword(String keyword) {
-    _searchController.text = keyword;
-    _onSearchChanged(keyword);
+  void _showAllKost() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => AllKostScreen(dataKos: _allKost)),
+    );
   }
 
   @override
   void dispose() {
     _searchController.dispose();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -110,7 +147,7 @@ class _SearchScreenState extends State<SearchScreen>
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         flexibleSpace: Container(
-          decoration: BoxDecoration(gradient: kPrimaryGradient),
+          decoration: const BoxDecoration(gradient: kPrimaryGradient),
         ),
         elevation: 0,
         leading: IconButton(
@@ -129,7 +166,7 @@ class _SearchScreenState extends State<SearchScreen>
                 ?.copyWith(color: Colors.white, fontSize: 14),
             onChanged: _onSearchChanged,
             decoration: InputDecoration(
-              hintText: 'Contoh: ITB atau Dipatiukur',
+              hintText: 'Cari nama atau lokasi kost...',
               hintStyle: Theme.of(context)
                   .textTheme
                   .bodySmall
@@ -138,8 +175,8 @@ class _SearchScreenState extends State<SearchScreen>
                   const Icon(Icons.search, color: kPrimaryLight, size: 20),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
-                      icon:
-                          const Icon(Icons.clear, color: Colors.white70, size: 18),
+                      icon: const Icon(Icons.clear,
+                          color: Colors.white70, size: 18),
                       onPressed: () {
                         _searchController.clear();
                         _onSearchChanged('');
@@ -152,152 +189,91 @@ class _SearchScreenState extends State<SearchScreen>
           ),
         ),
       ),
-      body: _isSearching
-          ? _buildSearchResults()
-          : _buildInitialRecommendationVisual(),
+      body: _isSearching ? _buildSearchResults() : _buildInitialView(),
     );
   }
 
-  Widget _buildInitialRecommendationVisual() {
+  Widget _buildInitialView() {
     return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: () {},
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  const Icon(Icons.my_location,
-                      color: Color(0xff14b8a6), size: 20),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Lokasi sekitar saya sekarang',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Lokasi sekitar
+            InkWell(
+              onTap: () {},
+              borderRadius: BorderRadius.circular(12),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Row(
+                  children: [
+                    const Icon(Icons.my_location,
+                        color: kPrimaryLight, size: 20),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Lokasi sekitar saya sekarang',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: Colors.white, fontSize: 14),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-          const Divider(color: Colors.white10, height: 1),
-          Container(
-            color: kCardBg,
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: kPrimaryLight,
-              labelColor: kPrimaryLight,
-              unselectedLabelColor: Colors.grey,
-              labelStyle: Theme.of(context)
-                  .textTheme
-                  .labelLarge
-                  ?.copyWith(fontWeight: FontWeight.bold, fontSize: 13),
-              tabs: const [
-                Tab(text: 'Kampus'),
-                Tab(text: 'Area'),
-                Tab(text: 'Stasiun & Halte'),
-              ],
+            const Divider(color: Colors.white10),
+            const SizedBox(height: 20),
+
+            // Kampus Berdasarkan Kota
+            Text(
+              'Kampus Berdasarkan Kota',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Pencarian populer',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: _popularCampuses.map((campus) {
-                    return InkWell(
-                      onTap: () => _searchWithKeyword(campus),
-                      borderRadius: BorderRadius.circular(20),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: kCardBg,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.1)),
-                        ),
-                        child: Text(
-                          campus,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.white, fontSize: 13),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 30),
-                Text(
-                  'Kampus Berdasarkan Kota',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
-                Theme(
-                  data: Theme.of(context)
-                      .copyWith(dividerColor: Colors.transparent),
-                  child: Container(
-                    decoration: kCardDecoration(radius: 12),
-                    child: ExpansionTile(
-                      initiallyExpanded: true,
-                      iconColor: const Color(0xff14b8a6),
-                      collapsedIconColor: Colors.grey,
+            const SizedBox(height: 12),
+            Theme(
+              data:
+                  Theme.of(context).copyWith(dividerColor: Colors.transparent),
+              child: Container(
+                decoration: kCardDecoration(radius: 12),
+                child: ExpansionTile(
+                  initiallyExpanded: true,
+                  iconColor: kPrimaryLight,
+                  collapsedIconColor: Colors.grey,
+                  title: Text(
+                    'Kab. Bandung',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600),
+                  ),
+                  children: [
+                    ListTile(
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 20),
+                      leading: const Icon(Icons.school_rounded,
+                          color: kPrimaryLight, size: 18),
                       title: Text(
-                        'Kota Bandung',
+                        'Universitas Pendidikan Indonesia Kampus Cibiru',
                         style: Theme.of(context)
                             .textTheme
-                            .titleMedium
-                            ?.copyWith(
-                                color: Colors.white,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600),
+                            .bodySmall
+                            ?.copyWith(color: Colors.white70, fontSize: 13),
                       ),
-                      children: [
-                        _buildSubCampusItem('Institut Teknologi Bandung (ITB)'),
-                        _buildSubCampusItem('Universitas Padjadjaran (UNPAD)'),
-                        _buildSubCampusItem(
-                            'Universitas Pendidikan Indonesia (UPI)'),
-                        _buildSubCampusItem('Telkom University (TelU)'),
-                      ],
+                      trailing: const Icon(Icons.chevron_right,
+                          color: Colors.grey, size: 16),
+                      onTap: _showAllKost,
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
-    );
-  }
-
-  Widget _buildSubCampusItem(String namaKampus) {
-    return ListTile(
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-      title: Text(namaKampus,
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(color: Colors.white70, fontSize: 13)),
-      trailing: const Icon(Icons.chevron_right, color: Colors.grey, size: 16),
-      onTap: () => _searchWithKeyword(namaKampus.split(' (')[0]),
     );
   }
 
@@ -311,7 +287,7 @@ class _SearchScreenState extends State<SearchScreen>
                 size: 60, color: Colors.white.withValues(alpha: 0.2)),
             const SizedBox(height: 16),
             Text(
-              'Kos tidak ditemukan di Bandung',
+              'Kos tidak ditemukan',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Colors.white,
                   fontSize: 15,
@@ -335,102 +311,137 @@ class _SearchScreenState extends State<SearchScreen>
       itemCount: _filteredResult.length,
       itemBuilder: (context, index) {
         final kost = _filteredResult[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          decoration: kElevatedCardDecoration(radius: 16),
-          child: ListTile(
-            contentPadding: const EdgeInsets.all(12),
-            leading: Container(
-              width: 65,
-              height: 65,
-              decoration: BoxDecoration(
-                color: const Color(0xff2d2d2d),
-                borderRadius: BorderRadius.circular(12),
+        return GestureDetector(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => DetailKostScreen(
+                nama: kost['nama'],
+                harga: kost['harga'],
+                tipe: kost['tipe'],
+                foto: kost['foto'],
+                ukuranKamar: kost['ukuranKamar'],
+                lokasiLengkap: kost['lokasiLengkap'],
+                fasilitasKamar: List<String>.from(kost['fasilitasKamar']),
+                tempatTerdekat:
+                    List<Map<String, String>>.from(kost['tempatTerdekat']),
+                rating: kost['rating'] ?? '4.8',
               ),
-              child: const Icon(Icons.image_outlined,
-                  color: Colors.white24, size: 22),
             ),
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: kElevatedCardDecoration(radius: 16),
+            child: Row(
               children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white24),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    kost['tipe'],
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.white70,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold),
+                ClipRRect(
+                  borderRadius:
+                      const BorderRadius.horizontal(left: Radius.circular(16)),
+                  child: Container(
+                    width: 90,
+                    height: 100,
+                    color: const Color(0xff2d2d2d),
+                    child: Image.asset(
+                      'assets/images/${kost['foto']}',
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Icon(
+                          Icons.image_outlined,
+                          color: Colors.white24,
+                          size: 24),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  kost['nama'],
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white24),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            kost['tipe'],
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    color: Colors.white70,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          kost['nama'],
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 3),
+                        Row(children: [
+                          const Icon(Icons.location_on,
+                              color: Colors.grey, size: 11),
+                          const SizedBox(width: 3),
+                          Expanded(
+                            child: Text(
+                              kost['lokasi'],
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.grey, fontSize: 11),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ]),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '${kost['harga']}/bln',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      color: kPrimaryLight,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12),
+                            ),
+                            Row(children: [
+                              const Icon(Icons.star,
+                                  color: kPrimaryColor, size: 12),
+                              const SizedBox(width: 3),
+                              Text(
+                                kost['rating'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold),
+                              ),
+                            ]),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 4),
-                Text(kost['lokasi'],
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.grey, fontSize: 12),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 4),
-                Text(
-                  '${kost['harga']}/bln',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: kPrimaryColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13),
-                ),
-              ],
-            ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.star, color: Color(0xff14b8a6), size: 14),
-                const SizedBox(width: 4),
-                Text(kost['rating'],
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold)),
-              ],
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailKostScreen(
-                    nama: kost['nama'],
-                    harga: kost['harga'],
-                    tipe: kost['tipe'],
-                    foto: kost['foto'],
-                    ukuranKamar: kost['ukuranKamar'],
-                    lokasiLengkap: kost['lokasiLengkap'],
-                    fasilitasKamar: List<String>.from(kost['fasilitasKamar']),
-                    tempatTerdekat:
-                        List<Map<String, String>>.from(kost['tempatTerdekat']),
-                  ),
-                ),
-              );
-            },
           ),
         );
       },

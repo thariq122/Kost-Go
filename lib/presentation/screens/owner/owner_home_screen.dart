@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import '../ui_helpers.dart';
 import 'owner_notification_screen.dart';
-import 'owner_rooms_screen.dart';
-import 'owner_tenants_screen.dart';
-import 'owner_financial_screen.dart';
-import 'owner_bookings_screen.dart';
 
 class OwnerHomeScreen extends StatefulWidget {
   const OwnerHomeScreen({super.key});
@@ -33,13 +29,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
             children: [
               _buildHeader(context),
               const SizedBox(height: 20),
-              _buildOccupancyCard(context),
-              const SizedBox(height: 20),
               _buildStatsRow(context),
-              const SizedBox(height: 28),
-              _buildSectionLabel(context, 'Shortcut Cepat'),
-              const SizedBox(height: 14),
-              _buildShortcuts(context),
               const SizedBox(height: 28),
               _buildSectionLabel(context, 'Aktivitas Terbaru'),
               const SizedBox(height: 14),
@@ -133,111 +123,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
             ],
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildOccupancyCard(BuildContext context) {
-    const int terisi = 12;
-    const int total = 15;
-    const double persen = terisi / total;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [Color(0xff0d9488), Color(0xff14b8a6)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: kPrimaryColor.withValues(alpha: 0.35),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Tingkat Hunian',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: Colors.white70, fontSize: 12)),
-                    const SizedBox(height: 4),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: '$terisi',
-                            style: Theme.of(context)
-                                .textTheme
-                                .displaySmall
-                                ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 42),
-                          ),
-                          TextSpan(
-                            text: '/$total Kamar',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(color: Colors.white70, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text(
-                      '${(persen * 100).toInt()}%',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: const LinearProgressIndicator(
-                value: persen,
-                minHeight: 8,
-                backgroundColor: Color(0x33ffffff),
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text('${total - terisi} kamar masih kosong',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.white70, fontSize: 12)),
-          ],
-        ),
       ),
     );
   }
@@ -343,95 +228,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                   fontWeight: FontWeight.bold,
                   fontSize: 16)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildShortcuts(BuildContext context) {
-    final shortcuts = [
-      {
-        'icon': Icons.add_home_work_rounded,
-        'label': 'Tambah\nKamar',
-        'color': kPrimaryColor,
-        'onTap': () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => const OwnerRoomsScreen(openAddRoom: true)),
-            ),
-      },
-      {
-        'icon': Icons.assignment_turned_in_rounded,
-        'label': 'Konfirmasi\nPesanan',
-        'color': Colors.orangeAccent,
-        'onTap': () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (_) => OwnerBookingsScreen(
-                        pendingCount: 2,
-                        onCountChanged: (_) {},
-                      )),
-            ),
-      },
-      {
-        'icon': Icons.people_rounded,
-        'label': 'Daftar\nPenghuni',
-        'color': const Color(0xff22c55e),
-        'onTap': () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const OwnerTenantsScreen()),
-            ),
-      },
-      {
-        'icon': Icons.bar_chart_rounded,
-        'label': 'Laporan\nKeuangan',
-        'color': const Color(0xff818cf8),
-        'onTap': () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const OwnerFinancialScreen()),
-            ),
-      },
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: shortcuts.map((s) {
-          final color = s['color'] as Color;
-          final onTap = s['onTap'] as VoidCallback;
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: InkWell(
-                onTap: onTap,
-                borderRadius: BorderRadius.circular(16),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: color.withValues(alpha: 0.2)),
-                  ),
-                  child: Column(
-                    children: [
-                      Icon(s['icon'] as IconData, color: color, size: 26),
-                      const SizedBox(height: 8),
-                      Text(s['label'] as String,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(
-                                  color: Colors.white70,
-                                  fontSize: 10,
-                                  height: 1.4)),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

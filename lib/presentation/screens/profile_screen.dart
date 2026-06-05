@@ -3,7 +3,6 @@ import 'ui_helpers.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import 'edit_profile_screen.dart';
-import 'terms_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -69,13 +68,6 @@ class ProfileScreen extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const EditProfileScreen()),
-    );
-  }
-
-  void _navigateToTerms(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const TermsScreen()),
     );
   }
 
@@ -167,25 +159,6 @@ class ProfileScreen extends StatelessWidget {
                       Icons.edit_outlined,
                       Colors.white,
                       () => _navigateToEditProfile(context),
-                    ),
-                    _buildMenuTile(
-                      context,
-                      'Hubungi Bantuan (WA)',
-                      Icons.support_agent,
-                      Colors.white,
-                      () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Menghubungkan ke WhatsApp CS...')),
-                        );
-                      },
-                    ),
-                    _buildMenuTile(
-                      context,
-                      'Syarat & Ketentuan',
-                      Icons.description_outlined,
-                      Colors.white,
-                      () => _navigateToTerms(context),
                     ),
                     const Divider(
                         color: Colors.white24, height: 1, thickness: 0.5),

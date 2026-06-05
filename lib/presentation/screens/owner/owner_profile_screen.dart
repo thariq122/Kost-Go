@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../ui_helpers.dart';
 import 'owner_notification_screen.dart';
-import 'owner_faq_screen.dart';
 
 class OwnerProfileScreen extends StatelessWidget {
   const OwnerProfileScreen({super.key});
@@ -186,74 +185,6 @@ class OwnerProfileScreen extends StatelessWidget {
     );
   }
 
-  void _showKostRules(BuildContext context) {
-    final rulesController = TextEditingController(
-        text:
-            '1. Dilarang membawa tamu menginap\n2. Jam malam pukul 22.00\n3. Dilarang merokok di dalam kamar\n4. Bayar kos paling lambat tanggal 5');
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16),
-        child: buildGlassContainer(
-          radius: 28,
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                      color: Colors.white24,
-                      borderRadius: BorderRadius.circular(2)),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Text('Aturan Kosan',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20)),
-              const SizedBox(height: 20),
-              buildGlassContainer(
-                radius: 12,
-                child: TextField(
-                  controller: rulesController,
-                  maxLines: 6,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.white, height: 1.6),
-                  decoration: InputDecoration(
-                    labelText: 'Aturan Kosan',
-                    labelStyle: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.grey),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.all(16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              _buildSaveButton(context, ctx, 'Simpan Aturan'),
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildField(
       BuildContext context, String label, TextEditingController controller,
       {IconData? icon, bool isPassword = false, TextInputType? keyboardType}) {
@@ -394,19 +325,6 @@ class OwnerProfileScreen extends StatelessWidget {
                 ),
               ),
 
-              // Stats mini
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Row(
-                  children: [
-                    _buildMiniStat(context, '15', 'Total Kamar'),
-                    _buildDivider(),
-                    _buildMiniStat(context, '12', 'Terisi'),
-                    _buildDivider(),
-                    _buildMiniStat(context, '3', 'Kosong'),
-                  ],
-                ),
-              ),
               const SizedBox(height: 28),
 
               // Menu sections
@@ -437,39 +355,17 @@ class OwnerProfileScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 8),
-              _buildSectionHeader(context, 'Kosan'),
-              _buildMenuItem(
-                context,
-                icon: Icons.rule_rounded,
-                iconColor: Colors.orangeAccent,
-                title: 'Aturan Kosan',
-                subtitle: 'Jam malam, tamu, dll.',
-                onTap: () => _showKostRules(context),
-              ),
+              _buildSectionHeader(context, 'Lainnya'),
               _buildMenuItem(
                 context,
                 icon: Icons.notifications_outlined,
                 iconColor: kPrimaryLight,
                 title: 'Notifikasi',
-                subtitle: 'Pengaturan pemberitahuan',
+                subtitle: 'Pemberitahuan pesanan masuk',
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (_) => const OwnerNotificationScreen()),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-              _buildSectionHeader(context, 'Lainnya'),
-              _buildMenuItem(
-                context,
-                icon: Icons.help_outline_rounded,
-                iconColor: Colors.grey,
-                title: 'Bantuan & FAQ',
-                subtitle: 'Pusat bantuan KostGo',
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const OwnerFaqScreen()),
                 ),
               ),
               _buildMenuItem(
@@ -487,32 +383,6 @@ class OwnerProfileScreen extends StatelessWidget {
       ),
     );
   }
-
-  Widget _buildMiniStat(BuildContext context, String value, String label) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: kCardDecoration(radius: 16),
-        child: Column(
-          children: [
-            Text(value,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: kPrimaryLight,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 22)),
-            const SizedBox(height: 4),
-            Text(label,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.grey, fontSize: 11)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDivider() => const SizedBox(width: 10);
 
   Widget _buildSectionHeader(BuildContext context, String title) {
     return Padding(

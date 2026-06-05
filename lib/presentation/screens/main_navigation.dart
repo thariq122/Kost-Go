@@ -6,7 +6,6 @@ import 'map_screen.dart';
 import 'auth_selection_screen.dart';
 import 'profile_screen.dart';
 import 'booking_history_screen.dart';
-import 'favorites_screen.dart';
 import 'ui_helpers.dart';
 
 class MainNavigation extends StatefulWidget {
@@ -20,8 +19,8 @@ class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
 
   void _onItemTapped(int index, bool isLoggedIn) {
-    // Tab Peta (1), Booking (2), Favorit (3) butuh login
-    if ((index == 1 || index == 2 || index == 3) && !isLoggedIn) {
+    // Tab Peta (1), Booking (2) butuh login
+    if ((index == 1 || index == 2) && !isLoggedIn) {
       _showLoginRequiredSheet();
     } else {
       setState(() => _selectedIndex = index);
@@ -86,9 +85,9 @@ class _MainNavigationState extends State<MainNavigation> {
                         borderRadius: BorderRadius.circular(16)),
                   ),
                   onPressed: () {
-                    Navigator.pop(context); // Tutup dialog
+                    Navigator.pop(context);
                     setState(() {
-                      _selectedIndex = 4; // Tab Masuk/Profil ada di index 4
+                      _selectedIndex = 3; // Tab Masuk/Profil index 3
                     });
                   },
                   child: Ink(
@@ -133,7 +132,6 @@ class _MainNavigationState extends State<MainNavigation> {
       HomeScreen(isLoggedIn: currentLoginStatus),
       const MapScreen(),
       const BookingHistoryScreen(),
-      const FavoritesScreen(),
       currentLoginStatus
           ? const ProfileScreen()
           : AuthSelectionScreen(
@@ -163,9 +161,7 @@ class _MainNavigationState extends State<MainNavigation> {
                 _buildNavItem(
                     2, Icons.list_alt_rounded, 'Booking', currentLoginStatus),
                 _buildNavItem(
-                    3, Icons.favorite_rounded, 'Favorit', currentLoginStatus),
-                _buildNavItem(
-                    4,
+                    3,
                     currentLoginStatus
                         ? Icons.person_rounded
                         : Icons.login_rounded,

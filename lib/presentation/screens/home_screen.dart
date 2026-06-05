@@ -265,8 +265,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                   if (widget.isLoggedIn) ...[
                     _buildPromoCarousel(),
-                    const SizedBox(height: 24),
-                    _buildQuickCategories(),
                     const SizedBox(height: 32),
                     _buildSectionTitle('Super Rare Kost', onSeeAll: () {
                       Navigator.push(
@@ -537,73 +535,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildQuickCategories() {
-    final stats = [
-      {
-        'icon': Icons.home_work_rounded,
-        'value': '1.200+',
-        'label': 'Kos Terdaftar',
-        'color': kPrimaryColor,
-      },
-      {
-        'icon': Icons.verified_rounded,
-        'value': '98%',
-        'label': 'Terverifikasi',
-        'color': const Color(0xff22c55e),
-      },
-      {
-        'icon': Icons.people_rounded,
-        'value': '50rb+',
-        'label': 'Penghuni Aktif',
-        'color': const Color(0xff818cf8),
-      },
-      {
-        'icon': Icons.star_rounded,
-        'value': '4.8',
-        'label': 'Rating Rata-rata',
-        'color': Colors.orangeAccent,
-      },
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: stats.map((s) {
-          final color = s['color'] as Color;
-          return Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.07),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: color.withValues(alpha: 0.2)),
-                ),
-                child: Column(
-                  children: [
-                    Icon(s['icon'] as IconData, color: color, size: 22),
-                    const SizedBox(height: 6),
-                    Text(s['value'] as String,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 13)),
-                    const SizedBox(height: 2),
-                    Text(s['label'] as String,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Colors.grey, fontSize: 9, height: 1.3)),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
     );
   }
 

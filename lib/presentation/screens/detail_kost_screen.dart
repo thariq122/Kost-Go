@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../providers/favorites_provider.dart';
 import 'map_screen.dart';
 import 'booking_screen.dart';
-import 'chat_screen.dart';
 import 'ui_helpers.dart';
 
 class DetailKostScreen extends StatefulWidget {
@@ -52,52 +49,8 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
     );
   }
 
-  void _openChat(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => ChatScreen(
-          namaKost: widget.nama,
-          namaPemilik: 'Pemilik Kos',
-        ),
-      ),
-    );
-  }
-
-  void _toggleFavorite(BuildContext context) {
-    final favProvider = Provider.of<FavoritesProvider>(context, listen: false);
-    final kost = FavoriteKost(
-      nama: widget.nama,
-      lokasi: widget.lokasiLengkap,
-      harga: widget.harga,
-      tipe: widget.tipe,
-      foto: widget.foto,
-      rating: widget.rating,
-      fasilitas: widget.fasilitas,
-      ukuranKamar: widget.ukuranKamar,
-      lokasiLengkap: widget.lokasiLengkap,
-      fasilitasKamar: widget.fasilitasKamar,
-      tempatTerdekat: widget.tempatTerdekat,
-    );
-    favProvider.toggle(kost);
-    final isFav = favProvider.isFavorite(widget.nama);
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(isFav
-            ? '❤️ ${widget.nama} ditambahkan ke favorit'
-            : '🤍 ${widget.nama} dihapus dari favorit'),
-        backgroundColor: isFav ? Colors.redAccent : Colors.grey.shade700,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final favProvider = Provider.of<FavoritesProvider>(context);
-    final isFav = favProvider.isFavorite(widget.nama);
-
     return Scaffold(
       backgroundColor: kScaffoldBg,
       body: Stack(
@@ -149,7 +102,6 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                       left: 20,
                       right: 20,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           buildGlassContainer(
                             radius: 20,
@@ -157,26 +109,6 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                               icon: const Icon(Icons.arrow_back,
                                   color: Colors.white),
                               onPressed: () => Navigator.pop(context),
-                            ),
-                          ),
-                          // Hanya tombol favorit, share dihapus
-                          buildGlassContainer(
-                            radius: 20,
-                            child: IconButton(
-                              icon: AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 300),
-                                transitionBuilder: (child, anim) =>
-                                    ScaleTransition(scale: anim, child: child),
-                                child: Icon(
-                                  isFav
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  key: ValueKey(isFav),
-                                  color:
-                                      isFav ? Colors.redAccent : Colors.white,
-                                ),
-                              ),
-                              onPressed: () => _toggleFavorite(context),
                             ),
                           ),
                         ],
@@ -511,20 +443,6 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                         ),
                         Row(
                           children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.white.withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                      color:
-                                          Colors.white.withValues(alpha: 0.2))),
-                              child: IconButton(
-                                onPressed: () => _openChat(context),
-                                icon: const Icon(Icons.chat_bubble_outline,
-                                    color: Colors.white, size: 20),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
                             ElevatedButton(
                               onPressed: () => _openBooking(context),
                               style: ElevatedButton.styleFrom(

@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import '../ui_helpers.dart';
 import 'owner_home_screen.dart';
-import 'owner_rooms_screen.dart';
 import 'owner_bookings_screen.dart';
-import 'owner_tenants_screen.dart';
 import 'owner_profile_screen.dart';
 
 class OwnerMainNavigation extends StatefulWidget {
@@ -27,12 +25,10 @@ class _OwnerMainNavigationState extends State<OwnerMainNavigation> {
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       const OwnerHomeScreen(),
-      const OwnerRoomsScreen(),
       OwnerBookingsScreen(
         pendingCount: pendingBookings,
         onCountChanged: (val) => setState(() => pendingBookings = val),
       ),
-      const OwnerTenantsScreen(),
       const OwnerProfileScreen(),
     ];
 
@@ -53,11 +49,9 @@ class _OwnerMainNavigationState extends State<OwnerMainNavigation> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 _buildNavItem(0, Icons.home_filled, 'Beranda'),
-                _buildNavItem(1, Icons.meeting_room_rounded, 'Kamar'),
                 _buildNavItemWithBadge(
-                    2, Icons.assignment_rounded, 'Pesanan', pendingBookings),
-                _buildNavItem(3, Icons.people_rounded, 'Penghuni'),
-                _buildNavItem(4, Icons.manage_accounts_rounded, 'Profil'),
+                    1, Icons.assignment_rounded, 'Pesanan', pendingBookings),
+                _buildNavItem(2, Icons.manage_accounts_rounded, 'Profil'),
               ],
             ),
           ),
