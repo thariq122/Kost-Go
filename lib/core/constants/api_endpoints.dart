@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 
 class ApiEndpoints {
+  /// Ganti ke true jika menggunakan Laragon, false untuk XAMPP
+  static const bool useLaragon = true;
+
   /// Base URL otomatis sesuai platform:
   /// - Web (browser)         → localhost (sama mesin)
   /// - Android emulator      → 10.0.2.2  (alias localhost di host)
@@ -12,8 +15,12 @@ class ApiEndpoints {
 
   static String get baseUrl {
     if (kIsWeb) {
-      // Flutter Web berjalan di browser yang sama mesin dengan XAMPP
-      return 'http://localhost/kostgo_api';
+      // Flutter Web berjalan di browser yang sama mesin
+      if (useLaragon) {
+        return 'http://localhost/flutter/Tubes/kostgo_api/';
+      } else {
+        return 'http://localhost/kostgo_api';
+      }
     }
     // Platform hanya tersedia di non-web
     if (Platform.isAndroid) {
