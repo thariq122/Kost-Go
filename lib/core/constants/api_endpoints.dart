@@ -2,36 +2,24 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 
 class ApiEndpoints {
-  /// Ganti ke true jika menggunakan Laragon, false untuk XAMPP
-  static const bool useLaragon = true;
+  /// Ganti sesuai environment:
+  /// - XAMPP  → http://localhost/kostgo_api
+  /// - Laragon → http://localhost/kostgo_api  (sama, Laragon juga pakai htdocs root)
+  static const String _webBaseUrl = 'http://localhost/kostgo_api';
 
-  /// Base URL otomatis sesuai platform:
-  /// - Web (browser)         → localhost (sama mesin)
-  /// - Android emulator      → 10.0.2.2  (alias localhost di host)
-  /// - iOS simulator         → localhost
-  /// - Device fisik Android/iOS → ganti [_deviceIp] dengan IP LAN kamu
-  static const String _deviceIp =
-      '192.168.1.100'; // ← ganti hanya jika test di HP fisik
+  /// IP LAN komputer — ganti jika test di HP fisik
+  static const String _deviceIp = '192.168.1.100';
 
   static String get baseUrl {
     if (kIsWeb) {
-      // Flutter Web berjalan di browser yang sama mesin
-      if (useLaragon) {
-        return 'http://localhost/flutter/Tubes/kostgo_api/';
-      } else {
-        return 'http://localhost/kostgo_api';
-      }
+      return _webBaseUrl;
     }
-    // Platform hanya tersedia di non-web
     if (Platform.isAndroid) {
-      // Android emulator mengakses host lewat 10.0.2.2
       return 'http://10.0.2.2/kostgo_api';
     }
     if (Platform.isIOS) {
-      // iOS Simulator mengakses host langsung lewat localhost
       return 'http://localhost/kostgo_api';
     }
-    // Fallback (desktop, device fisik, dll.)
     return 'http://$_deviceIp/kostgo_api';
   }
 
