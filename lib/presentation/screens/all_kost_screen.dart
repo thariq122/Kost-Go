@@ -22,6 +22,9 @@ class AllKostScreen extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => DetailKostScreen(
+                    kostId: kos['id'] is int
+                        ? kos['id']
+                        : int.tryParse(kos['id']?.toString() ?? '0') ?? 0,
                     nama: kos['nama'],
                     harga: kos['harga'],
                     tipe: kos['tipe'],
@@ -73,10 +76,13 @@ class AllKostScreen extends StatelessWidget {
                           ),
                           child: Text(
                             kos['tipe'],
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: Colors.white70,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    color: Colors.white70,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold),
                           ),
                         ),
                         const SizedBox(height: 6),

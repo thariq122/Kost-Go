@@ -37,12 +37,6 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
 
       if (success) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('⚡ Login Berhasil! Selamat Datang.'),
-              backgroundColor: Color(0xff14b8a6),
-            ),
-          );
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(builder: (context) => const MainNavigation()),

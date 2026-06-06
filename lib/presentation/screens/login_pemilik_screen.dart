@@ -37,12 +37,6 @@ class _LoginPemilikScreenState extends State<LoginPemilikScreen> {
     if (!mounted) return;
 
     if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login berhasil! Selamat datang.'),
-          backgroundColor: Color(0xff14b8a6),
-        ),
-      );
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (_) => const OwnerMainNavigation()),

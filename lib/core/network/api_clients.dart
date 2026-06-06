@@ -65,11 +65,17 @@ class ApiClient {
   }
 
   static Map<String, dynamic> _handleResponse(http.Response response) {
-    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+    // Strip BOM (\uFEFF) dan whitespace sebelum decode
+    final body = response.body.replaceAll('\uFEFF', '').trim();
+    final decoded = jsonDecode(body) as Map<String, dynamic>;
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return decoded;
     } else {
       throw Exception(decoded['message'] ?? 'Terjadi kesalahan server');
     }
   }
+
+  /// Expose decode untuk dipakai booking_service
+  static Map<String, dynamic> decodeResponse(http.Response response) =>
+      _handleResponse(response);
 }

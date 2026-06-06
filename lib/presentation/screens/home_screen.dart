@@ -325,6 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Konversi KostModel ke Map untuk AllKostScreen (yang masih pakai Map)
   List<Map<String, dynamic>> _toMapList(List<KostModel> list) => list
       .map((k) => {
+            'id': k.id,
             'nama': k.nama,
             'lokasi': k.lokasi,
             'harga': k.hargaFormatted,

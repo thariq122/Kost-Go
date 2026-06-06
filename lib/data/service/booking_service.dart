@@ -49,14 +49,24 @@ class BookingService {
 
     final streamed = await request.send().timeout(_timeout);
     final response = await http.Response.fromStream(streamed);
-    final decoded = jsonDecode(response.body) as Map<String, dynamic>;
+
+    // Pastikan response body bersih dari BOM sebelum decode
+    final bodyStr = response.body.replaceAll('\uFEFF', '').trim();
+
+    Map<String, dynamic> decoded;
+    try {
+      decoded = jsonDecode(bodyStr) as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Response tidak valid dari server: $bodyStr');
+    }
 
     if (response.statusCode >= 200 &&
         response.statusCode < 300 &&
         decoded['status'] == 'success') {
       return (decoded['data'] as Map<String, dynamic>)['booking_id'] as int?;
     }
-    throw Exception(decoded['message'] ?? 'Booking gagal');
+    throw Exception(
+        decoded['message'] ?? 'Booking gagal (status ${response.statusCode})');
   }
 
   /// Riwayat booking milik user (pencari)
