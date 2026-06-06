@@ -34,6 +34,12 @@ class AllKostScreen extends StatelessWidget {
                     fasilitasKamar: List<String>.from(kos['fasilitasKamar']),
                     tempatTerdekat:
                         List<Map<String, String>>.from(kos['tempatTerdekat']),
+                    latitude: kos['latitude'] is double
+                        ? kos['latitude']
+                        : double.tryParse(kos['latitude']?.toString() ?? ''),
+                    longitude: kos['longitude'] is double
+                        ? kos['longitude']
+                        : double.tryParse(kos['longitude']?.toString() ?? ''),
                   ),
                 ),
               );

@@ -77,6 +77,8 @@ class _SearchScreenState extends State<SearchScreen> {
             'lokasiLengkap': k.lokasiLengkap,
             'fasilitasKamar': k.fasilitasKamar,
             'tempatTerdekat': k.tempatTerdekat,
+            'latitude': k.latitude,
+            'longitude': k.longitude,
           })
       .toList();
 
@@ -273,6 +275,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 tempatTerdekat: kost.tempatTerdekat,
                 rating: kost.rating.toString(),
                 fasilitas: kost.fasilitas ?? '',
+                latitude: kost.latitude,
+                longitude: kost.longitude,
               ),
             ),
           ),

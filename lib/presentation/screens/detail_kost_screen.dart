@@ -15,6 +15,8 @@ class DetailKostScreen extends StatefulWidget {
   final List<Map<String, String>> tempatTerdekat;
   final String rating;
   final String fasilitas;
+  final double? latitude;
+  final double? longitude;
 
   const DetailKostScreen({
     super.key,
@@ -29,6 +31,8 @@ class DetailKostScreen extends StatefulWidget {
     required this.tempatTerdekat,
     this.rating = '4.8',
     this.fasilitas = '',
+    this.latitude,
+    this.longitude,
   });
 
   @override
@@ -259,6 +263,8 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                                 child: MapScreen(
                                   namaKost: widget.nama,
                                   lokasiKost: widget.lokasiLengkap,
+                                  latitude: widget.latitude,
+                                  longitude: widget.longitude,
                                 ),
                               ),
                               Positioned.fill(
@@ -272,6 +278,8 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                                           builder: (context) => MapScreen(
                                             namaKost: widget.nama,
                                             lokasiKost: widget.lokasiLengkap,
+                                            latitude: widget.latitude,
+                                            longitude: widget.longitude,
                                           ),
                                         ),
                                       );
@@ -294,6 +302,8 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                               builder: (context) => MapScreen(
                                 namaKost: widget.nama,
                                 lokasiKost: widget.lokasiLengkap,
+                                latitude: widget.latitude,
+                                longitude: widget.longitude,
                               ),
                             ),
                           );

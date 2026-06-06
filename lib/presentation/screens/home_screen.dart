@@ -340,6 +340,8 @@ class _HomeScreenState extends State<HomeScreen> {
             'lokasiLengkap': k.lokasiLengkap,
             'fasilitasKamar': k.fasilitasKamar,
             'tempatTerdekat': k.tempatTerdekat,
+            'latitude': k.latitude,
+            'longitude': k.longitude,
           })
       .toList();
 
@@ -359,6 +361,8 @@ class _HomeScreenState extends State<HomeScreen> {
             tempatTerdekat: kos.tempatTerdekat,
             rating: kos.rating.toString(),
             fasilitas: kos.fasilitas ?? '',
+            latitude: kos.latitude,
+            longitude: kos.longitude,
           ),
         ));
   }

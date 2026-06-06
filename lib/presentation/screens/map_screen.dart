@@ -6,11 +6,15 @@ import 'ui_helpers.dart';
 class MapScreen extends StatefulWidget {
   final String namaKost;
   final String lokasiKost;
+  final double? latitude;
+  final double? longitude;
 
   const MapScreen({
     super.key,
-    this.namaKost = 'Kost Dipatiukur Regensi Tipe A',
-    this.lokasiKost = 'Coblong, Bandung (Dekat UNPAD/ITB)',
+    this.namaKost = 'KostGo',
+    this.lokasiKost = 'Cibiru, Kab. Bandung',
+    this.latitude,
+    this.longitude,
   });
 
   @override
@@ -31,7 +35,10 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _kostLocation = _defaultLocation;
+    // Pakai koordinat dari parameter jika ada, fallback ke default Cibiru Bandung
+    _kostLocation = (widget.latitude != null && widget.longitude != null)
+        ? LatLng(widget.latitude!, widget.longitude!)
+        : _defaultLocation;
     _setupMarker();
     _requestLocationPermission();
   }
