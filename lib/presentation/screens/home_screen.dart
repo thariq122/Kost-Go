@@ -29,25 +29,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final List<Map<String, dynamic>> _promoBanners = [
     {
-      'title': 'Promo Ngebut Q3!',
-      'subtitle': 'Diskon sewa hingga Rp 500rb',
-      'btnText': 'Cek Sekarang',
-      'icon': Icons.bolt,
+      'title': 'Cari Kos Jadi Mudah',
+      'subtitle': 'Temukan kos terbaik di sekitar kampus & kantormu',
+      'icon': Icons.search_rounded,
       'colors': [const Color(0xff14b8a6), const Color(0xff0d9488)],
+      'bgIcon': Icons.home_work_rounded,
     },
     {
-      'title': 'Kos Premium Verified ✨',
-      'subtitle': 'Bebas penipuan, survei via online',
-      'btnText': 'Lihat Koleksi',
-      'icon': Icons.verified_user,
+      'title': 'Booking Tanpa Ribet',
+      'subtitle': 'Ajukan sewa, upload bukti, tinggal tunggu konfirmasi',
+      'icon': Icons.assignment_turned_in_rounded,
       'colors': [const Color(0xff2563eb), const Color(0xff1d4ed8)],
+      'bgIcon': Icons.phone_android_rounded,
     },
     {
-      'title': 'Spesial Anak Rantau 🎒',
-      'subtitle': 'Cashback hingga 10% member baru',
-      'btnText': 'Klaim Voucher',
-      'icon': Icons.card_giftcard,
-      'colors': [const Color(0xffdb2777), const Color(0xff9333ea)],
+      'title': 'Kos Terpercaya & Aman',
+      'subtitle': 'Semua pemilik kos terverifikasi di KostGo',
+      'icon': Icons.verified_user_rounded,
+      'colors': [const Color(0xff7c3aed), const Color(0xff6d28d9)],
+      'bgIcon': Icons.shield_rounded,
     },
   ];
 
@@ -99,17 +99,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController.animateTo(0,
         duration: const Duration(milliseconds: 600),
         curve: Curves.fastOutSlowIn);
-  }
-
-  void _showInteractionFeedback(BuildContext context, String message) {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 1),
-        backgroundColor: const Color(0xff14b8a6),
-      ),
-    );
   }
 
   @override
@@ -376,90 +365,104 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: banner['colors'][0]
-                          .withValues(alpha: 0.3), // Glow effect per banner
-                      blurRadius: 15,
+                      color: (banner['colors'][0] as Color)
+                          .withValues(alpha: 0.35),
+                      blurRadius: 16,
                       offset: const Offset(0, 8),
                     ),
                   ],
                 ),
                 child: Stack(
                   children: [
+                    // Background icon besar — dekorasi
                     Positioned(
-                      right: -10,
-                      bottom: -10,
-                      child: Icon(banner['icon'],
-                          size: 130,
-                          color: Colors.white.withValues(alpha: 0.15)),
+                      right: -12,
+                      bottom: -12,
+                      child: Icon(
+                        banner['bgIcon'] as IconData,
+                        size: 140,
+                        color: Colors.white.withValues(alpha: 0.08),
+                      ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20),
+                    // Foreground icon kecil kiri
+                    Positioned(
+                      left: 20,
+                      top: 20,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Icon(
+                          banner['icon'] as IconData,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                    // Teks kanan ikon
+                    Positioned(
+                      left: 76,
+                      top: 20,
+                      right: 20,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(banner['title'],
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleLarge
-                                  ?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20)),
-                          Text(banner['subtitle'],
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                      color: Colors.white70,
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 12),
-                          InkWell(
-                            onTap: () => _showInteractionFeedback(context,
-                                'Membuka detail promo: ${banner['title']}'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 6),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10)),
-                              child: Text(banner['btnText'],
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall
-                                      ?.copyWith(
-                                          color: Colors.black,
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.bold)),
-                            ),
+                          Text(
+                            banner['title'] as String,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            banner['subtitle'] as String,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                    height: 1.4),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
+                      ),
+                    ),
+                    // Dot indicator posisi bawah kanan
+                    Positioned(
+                      bottom: 14,
+                      right: 16,
+                      child: Row(
+                        children: List.generate(
+                          _promoBanners.length,
+                          (i) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.only(left: 4),
+                            height: 5,
+                            width: _currentBannerIndex == i ? 16 : 5,
+                            decoration: BoxDecoration(
+                              color: _currentBannerIndex == i
+                                  ? Colors.white
+                                  : Colors.white38,
+                              borderRadius: BorderRadius.circular(3),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               );
             },
-          ),
-        ),
-        const SizedBox(height: 16),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            _promoBanners.length,
-            (index) => AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              height: 6,
-              width: _currentBannerIndex == index ? 18 : 6,
-              decoration: BoxDecoration(
-                color: _currentBannerIndex == index
-                    ? const Color(0xff14b8a6)
-                    : Colors.white24,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
           ),
         ),
       ],
