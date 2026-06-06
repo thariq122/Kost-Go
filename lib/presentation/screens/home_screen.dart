@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/kost_provider.dart';
@@ -18,79 +17,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final PageController _bannerController = PageController(initialPage: 0);
   final ScrollController _scrollController = ScrollController();
-
-  int _currentBannerIndex = 0;
-  late Timer _bannerTimer;
   bool _showBackToTopButton = false;
-
-  // ==================== DATA KOSAN DIHAPUS — sekarang dari KostProvider ====================
-
-  final List<Map<String, dynamic>> _promoBanners = [
-    {
-      'title': 'Cari Kos Jadi Mudah',
-      'subtitle': 'Temukan kos terbaik di sekitar kampus & kantormu',
-      'icon': Icons.search_rounded,
-      'colors': [const Color(0xff14b8a6), const Color(0xff0d9488)],
-      'bgIcon': Icons.home_work_rounded,
-    },
-    {
-      'title': 'Booking Tanpa Ribet',
-      'subtitle': 'Ajukan sewa, upload bukti, tinggal tunggu konfirmasi',
-      'icon': Icons.assignment_turned_in_rounded,
-      'colors': [const Color(0xff2563eb), const Color(0xff1d4ed8)],
-      'bgIcon': Icons.phone_android_rounded,
-    },
-    {
-      'title': 'Kos Terpercaya & Aman',
-      'subtitle': 'Semua pemilik kos terverifikasi di KostGo',
-      'icon': Icons.verified_user_rounded,
-      'colors': [const Color(0xff7c3aed), const Color(0xff6d28d9)],
-      'bgIcon': Icons.shield_rounded,
-    },
-  ];
 
   @override
   void initState() {
     super.initState();
-    // Load kost dari API
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<KostProvider>().fetchAllKost();
     });
 
-    _bannerTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
-      if (_currentBannerIndex < _promoBanners.length - 1) {
-        _currentBannerIndex++;
-      } else {
-        _currentBannerIndex = 0;
-      }
-      if (_bannerController.hasClients) {
-        _bannerController.animateToPage(
-          _currentBannerIndex,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-
     _scrollController.addListener(() {
       if (_scrollController.offset > 400) {
-        if (!_showBackToTopButton) {
-          setState(() => _showBackToTopButton = true);
-        }
+        if (!_showBackToTopButton) setState(() => _showBackToTopButton = true);
       } else {
-        if (_showBackToTopButton) {
-          setState(() => _showBackToTopButton = false);
-        }
+        if (_showBackToTopButton) setState(() => _showBackToTopButton = false);
       }
     });
   }
 
   @override
   void dispose() {
-    _bannerTimer.cancel();
-    _bannerController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -160,8 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     _buildGuestBanner(),
                   ],
                   if (widget.isLoggedIn) ...[
-                    _buildPromoCarousel(),
-                    const SizedBox(height: 32),
+                    const SizedBox(height: 16),
                     Consumer<KostProvider>(
                       builder: (context, kostProvider, _) {
                         final list = kostProvider.allKost;
@@ -176,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildSectionTitle('Super Rare Kost', onSeeAll: () {
+                            _buildSectionTitle('Promo Kos', onSeeAll: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -341,134 +287,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPromoCarousel() {
-    return Column(
-      children: [
-        SizedBox(
-          height: 140,
-          child: PageView.builder(
-            controller: _bannerController,
-            itemCount: _promoBanners.length,
-            onPageChanged: (index) {
-              setState(() => _currentBannerIndex = index);
-            },
-            itemBuilder: (context, index) {
-              final banner = _promoBanners[index];
-              return Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: banner['colors'],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: (banner['colors'][0] as Color)
-                          .withValues(alpha: 0.35),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    // Background icon besar — dekorasi
-                    Positioned(
-                      right: -12,
-                      bottom: -12,
-                      child: Icon(
-                        banner['bgIcon'] as IconData,
-                        size: 140,
-                        color: Colors.white.withValues(alpha: 0.08),
-                      ),
-                    ),
-                    // Foreground icon kecil kiri
-                    Positioned(
-                      left: 20,
-                      top: 20,
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Icon(
-                          banner['icon'] as IconData,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    // Teks kanan ikon
-                    Positioned(
-                      left: 76,
-                      top: 20,
-                      right: 20,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            banner['title'] as String,
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleMedium
-                                ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            banner['subtitle'] as String,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                    color: Colors.white70,
-                                    fontSize: 12,
-                                    height: 1.4),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Dot indicator posisi bawah kanan
-                    Positioned(
-                      bottom: 14,
-                      right: 16,
-                      child: Row(
-                        children: List.generate(
-                          _promoBanners.length,
-                          (i) => AnimatedContainer(
-                            duration: const Duration(milliseconds: 300),
-                            margin: const EdgeInsets.only(left: 4),
-                            height: 5,
-                            width: _currentBannerIndex == i ? 16 : 5,
-                            decoration: BoxDecoration(
-                              color: _currentBannerIndex == i
-                                  ? Colors.white
-                                  : Colors.white38,
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildSectionTitle(String title, {required VoidCallback onSeeAll}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -563,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Stack(
-                    clipBehavior: Clip.none,
+                    clipBehavior: Clip.hardEdge,
                     children: [
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
@@ -583,44 +401,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-                      Positioned(
-                        bottom: -12,
-                        left: 0,
-                        right: 0,
-                        child: Center(
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 6),
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(colors: [
-                                Color(0xff9333ea),
-                                Color(0xffdb2777)
-                              ]),
-                              borderRadius: BorderRadius.circular(20),
-                              boxShadow: [
-                                BoxShadow(
-                                    color: const Color(0xffdb2777)
-                                        .withValues(alpha: 0.4),
-                                    blurRadius: 6,
-                                    offset: const Offset(0, 3)),
-                              ],
-                              border: Border.all(
-                                  color: const Color(0xff1e1e1e), width: 2),
-                            ),
-                            child: Text('⭐ SUPER RARE KOST',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 12),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
