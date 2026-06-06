@@ -11,8 +11,9 @@ class MapScreen extends StatefulWidget {
 
   const MapScreen({
     super.key,
-    this.namaKost = 'KostGo',
-    this.lokasiKost = 'Cibiru, Kab. Bandung',
+    this.namaKost = 'Universitas Pendidikan Indonesia - Kampus UPI Cibiru',
+    this.lokasiKost =
+        'Jl. Pendidikan No.15, Cibiru Wetan, Kec. Cileunyi, Kabupaten Bandung, Jawa Barat 40625',
     this.latitude,
     this.longitude,
   });
@@ -27,7 +28,8 @@ class _MapScreenState extends State<MapScreen> {
   bool _locationPermissionGranted = false;
 
   // Koordinat default: Bandung
-  static const LatLng _defaultLocation = LatLng(-6.9175, 107.6191);
+  static const LatLng _defaultLocation =
+      LatLng(-6.939991914882308, 107.7248579608283);
 
   late LatLng _kostLocation;
   Set<Marker> _markers = {};
