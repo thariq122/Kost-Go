@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../ui_helpers.dart';
+import '../../../providers/booking_provider.dart';
+import '../../../providers/auth_provider.dart';
+import '../../../providers/owner_stats_provider.dart';
 import 'owner_home_screen.dart';
 import 'owner_bookings_screen.dart';
 import 'owner_profile_screen.dart';
@@ -14,8 +18,17 @@ class OwnerMainNavigation extends StatefulWidget {
 class _OwnerMainNavigationState extends State<OwnerMainNavigation> {
   int _selectedIndex = 0;
 
-  // Jumlah booking pending — di production ini dari state/provider
-  int pendingBookings = 2;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final pemilikId = context.read<AuthProvider>().userId;
+      if (pemilikId > 0) {
+        context.read<BookingProvider>().fetchOwnerBookings(pemilikId);
+        context.read<OwnerStatsProvider>().fetchStats(pemilikId);
+      }
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
@@ -23,12 +36,11 @@ class _OwnerMainNavigationState extends State<OwnerMainNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final pendingCount = context.watch<BookingProvider>().pendingCount;
+
     final List<Widget> screens = [
       const OwnerHomeScreen(),
-      OwnerBookingsScreen(
-        pendingCount: pendingBookings,
-        onCountChanged: (val) => setState(() => pendingBookings = val),
-      ),
+      const OwnerBookingsScreen(),
       const OwnerProfileScreen(),
     ];
 
@@ -50,7 +62,7 @@ class _OwnerMainNavigationState extends State<OwnerMainNavigation> {
               children: [
                 _buildNavItem(0, Icons.home_filled, 'Beranda'),
                 _buildNavItemWithBadge(
-                    1, Icons.assignment_rounded, 'Pesanan', pendingBookings),
+                    1, Icons.assignment_rounded, 'Pesanan', pendingCount),
                 _buildNavItem(2, Icons.manage_accounts_rounded, 'Profil'),
               ],
             ),

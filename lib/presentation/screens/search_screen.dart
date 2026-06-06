@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/kost_provider.dart';
+import '../../data/model/kost_model.dart';
 import 'detail_kost_screen.dart';
 import 'all_kost_screen.dart';
 import 'ui_helpers.dart';
@@ -14,98 +17,24 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
 
-  final List<Map<String, dynamic>> _allKost = [
-    {
-      'nama': 'Kost Wisma Serasi Tipe A',
-      'lokasi': 'Serpong, Tangerang',
-      'harga': 'Rp 1.431.500',
-      'tipe': 'Campur',
-      'rating': '4.6',
-      'foto': 'Kos1.png',
-      'ukuranKamar': '3x4 meter',
-      'lokasiLengkap': 'Jl. Serpong Raya No.12, Serpong, Tangerang, Banten',
-      'fasilitasKamar': [
-        'WiFi Gratis',
-        'Kasur Springbed',
-        'Lemari Pakaian',
-        'AC 1/2 PK'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Stasiun Serpong', 'jarak': '10m'},
-        {'nama': 'Pasar Modern Serpong', 'jarak': '400m'},
-      ],
-    },
-    {
-      'nama': 'Pondok Gusgas 2',
-      'lokasi': 'Cibiru, Kab. Bandung',
-      'harga': 'Rp 850.000',
-      'tipe': 'Putra',
-      'rating': '4.8',
-      'foto': 'Kos2.png',
-      'ukuranKamar': '3x3 meter',
-      'lokasiLengkap':
-          'Jl. Cibiru Indah No.45, Cibiru, Kab. Bandung, Jawa Barat',
-      'fasilitasKamar': [
-        'WiFi Koridor',
-        'Kasur Busa',
-        'Lemari Kayu',
-        'Meja Belajar'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Kampus UIN Bandung', 'jarak': '500m'},
-        {'nama': 'Borma Cibiru', 'jarak': '800m'},
-      ],
-    },
-    {
-      'nama': 'Pondok Priangan 1',
-      'lokasi': 'Cibiru, Kab. Bandung',
-      'harga': 'Rp 900.000',
-      'tipe': 'Putri',
-      'rating': '4.5',
-      'foto': 'Kos3.png',
-      'ukuranKamar': '3.5x3.5 meter',
-      'lokasiLengkap':
-          'Cileunyi-Cibiru Blok C No.3, Cibiru, Kab. Bandung, Jawa Barat',
-      'fasilitasKamar': [
-        'Kamar Mandi Dalam',
-        'WiFi Fast',
-        'Kasur Kapuk',
-        'Gantungan Baju'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Bundaran Cibiru', 'jarak': '300m'},
-        {'nama': 'Polda Jabar', 'jarak': '1.2km'},
-      ],
-    },
-    {
-      'nama': 'Pondok Priangan 2',
-      'lokasi': 'Cibiru, Kab. Bandung',
-      'harga': 'Rp 950.000',
-      'tipe': 'Campur',
-      'rating': '4.7',
-      'foto': 'kos4.png',
-      'ukuranKamar': '4x4 meter',
-      'lokasiLengkap':
-          'Samping Gang Priangan No.88, Cibiru, Kab. Bandung, Jawa Barat',
-      'fasilitasKamar': [
-        'AC Dingin',
-        'Kamar Mandi Shower',
-        'Kasur King Size',
-        'WiFi 5G'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Stasiun Cimekar', 'jarak': '2.5km'},
-        {'nama': 'Warteg Priangan', 'jarak': '50m'},
-      ],
-    },
-  ];
+  List<KostModel> get _allKost => context.read<KostProvider>().allKost;
 
-  List<Map<String, dynamic>> _filteredResult = [];
+  List<KostModel> _filteredResult = [];
 
   @override
   void initState() {
     super.initState();
-    _filteredResult = _allKost;
+    // Pakai data yang sudah ada di provider, kalau kosong fetch dulu
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = context.read<KostProvider>();
+      if (provider.allKost.isEmpty) {
+        provider.fetchAllKost().then((_) {
+          setState(() => _filteredResult = _allKost);
+        });
+      } else {
+        setState(() => _filteredResult = _allKost);
+      }
+    });
   }
 
   void _onSearchChanged(String query) {
@@ -116,12 +45,8 @@ class _SearchScreenState extends State<SearchScreen> {
       } else {
         _filteredResult = _allKost
             .where((kost) =>
-                (kost['nama'] as String)
-                    .toLowerCase()
-                    .contains(query.toLowerCase()) ||
-                (kost['lokasi'] as String)
-                    .toLowerCase()
-                    .contains(query.toLowerCase()))
+                kost.nama.toLowerCase().contains(query.toLowerCase()) ||
+                kost.lokasi.toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -130,9 +55,30 @@ class _SearchScreenState extends State<SearchScreen> {
   void _showAllKost() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => AllKostScreen(dataKos: _allKost)),
+      MaterialPageRoute(
+          builder: (_) => AllKostScreen(dataKos: _toMapList(_allKost))),
     );
   }
+
+  List<Map<String, dynamic>> _toMapList(List<KostModel> list) => list
+      .map((k) => {
+            'id': k.id,
+            'nama': k.nama,
+            'lokasi': k.lokasi,
+            'harga': k.hargaFormatted,
+            'hargaCoret': k.hargaCoretFormatted ?? '',
+            'tipe': k.tipe,
+            'sisa': k.sisaKamarText,
+            'rating': k.rating.toString(),
+            'diskon': k.diskon ?? '',
+            'fasilitas': k.fasilitas ?? '',
+            'foto': k.foto ?? '',
+            'ukuranKamar': k.ukuranKamar ?? '',
+            'lokasiLengkap': k.lokasiLengkap,
+            'fasilitasKamar': k.fasilitasKamar,
+            'tempatTerdekat': k.tempatTerdekat,
+          })
+      .toList();
 
   @override
   void dispose() {
@@ -316,16 +262,17 @@ class _SearchScreenState extends State<SearchScreen> {
             context,
             MaterialPageRoute(
               builder: (_) => DetailKostScreen(
-                nama: kost['nama'],
-                harga: kost['harga'],
-                tipe: kost['tipe'],
-                foto: kost['foto'],
-                ukuranKamar: kost['ukuranKamar'],
-                lokasiLengkap: kost['lokasiLengkap'],
-                fasilitasKamar: List<String>.from(kost['fasilitasKamar']),
-                tempatTerdekat:
-                    List<Map<String, String>>.from(kost['tempatTerdekat']),
-                rating: kost['rating'] ?? '4.8',
+                kostId: kost.id,
+                nama: kost.nama,
+                harga: kost.hargaFormatted,
+                tipe: kost.tipe,
+                foto: kost.foto ?? '',
+                ukuranKamar: kost.ukuranKamar ?? '',
+                lokasiLengkap: kost.lokasiLengkap,
+                fasilitasKamar: kost.fasilitasKamar,
+                tempatTerdekat: kost.tempatTerdekat,
+                rating: kost.rating.toString(),
+                fasilitas: kost.fasilitas ?? '',
               ),
             ),
           ),
@@ -342,7 +289,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     height: 100,
                     color: const Color(0xff2d2d2d),
                     child: Image.asset(
-                      'assets/images/${kost['foto']}',
+                      'assets/images/${kost.foto ?? ''}',
                       fit: BoxFit.cover,
                       errorBuilder: (_, __, ___) => const Icon(
                           Icons.image_outlined,
@@ -365,7 +312,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            kost['tipe'],
+                            kost.tipe,
                             style: Theme.of(context)
                                 .textTheme
                                 .labelSmall
@@ -377,7 +324,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          kost['nama'],
+                          kost.nama,
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium
@@ -395,7 +342,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           const SizedBox(width: 3),
                           Expanded(
                             child: Text(
-                              kost['lokasi'],
+                              kost.lokasi,
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
@@ -410,7 +357,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '${kost['harga']}/bln',
+                              '${kost.hargaFormatted}/bln',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
@@ -424,7 +371,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   color: kPrimaryColor, size: 12),
                               const SizedBox(width: 3),
                               Text(
-                                kost['rating'],
+                                kost.rating.toString(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall

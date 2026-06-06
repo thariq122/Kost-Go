@@ -1,8 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Izin internet untuk koneksi ke API -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="kostgo"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
         
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyClRKqHh3D0Qlo97aBd3GzyKb-XndK6J5k"/>

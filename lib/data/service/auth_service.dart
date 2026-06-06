@@ -1,55 +1,80 @@
+import '../../core/constants/api_endpoints.dart';
+import '../../core/network/api_clients.dart';
+import '../model/user_model.dart';
+
 class AuthService {
-  // 1. SIMULASI FUNGSI LOGIN PENCARI
-  Future<Map<String, dynamic>?> loginPencari(
-      String email, String password) async {
-    // Beri jeda 1 detik seolah-olah sedang loading jaringan
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (email.isNotEmpty && password.length >= 6) {
-      return {
-        'uid': 'user_123',
-        'name': 'Anak Rantau Keren',
-        'email': email,
-        'role': 'pencari',
-      };
+  /// Login — role: 'pencari' atau 'pemilik'
+  Future<UserModel?> login({
+    required String noHp,
+    required String password,
+    required String role,
+  }) async {
+    final response = await ApiClient.post(
+      ApiEndpoints.login,
+      body: {
+        'no_hp': noHp,
+        'password': password,
+        'role': role,
+      },
+    );
+    if (response['status'] == 'success') {
+      return UserModel.fromJson(response['data'] as Map<String, dynamic>);
     }
-    return null; // Return null jika gagal
+    return null;
   }
 
-  // 2. SIMULASI FUNGSI REGISTER PENCARI
-  Future<Map<String, dynamic>?> registerPencari(
-      String name, String phone, String email, String password) async {
-    // Beri jeda 1 detik untuk loading jaringan simulasi
-    await Future.delayed(const Duration(seconds: 1));
-
-    // Validasi sederhana, jika email tidak kosong dan password cukup panjang
-    if (email.isNotEmpty && password.length >= 8) {
-      return {
-        'uid': 'pencari_${DateTime.now().millisecondsSinceEpoch}',
-        'name': name,
-        'phone': phone,
+  /// Register pencari
+  Future<UserModel?> registerPencari({
+    required String nama,
+    required String noHp,
+    required String email,
+    required String password,
+  }) async {
+    final response = await ApiClient.post(
+      ApiEndpoints.register,
+      body: {
+        'nama': nama,
+        'no_hp': noHp,
         'email': email,
+        'password': password,
         'role': 'pencari',
-      };
+      },
+    );
+    if (response['status'] == 'success') {
+      return UserModel.fromJson(response['data'] as Map<String, dynamic>);
     }
-    return null; // Return null jika gagal registrasi
+    return null;
   }
 
-  // 3. SIMULASI FUNGSI REGISTER PEMILIK
-  Future<Map<String, dynamic>?> registerPemilik(
-      String name, String phone, String email, String password) async {
-    // Beri jeda 1 detik untuk loading jaringan simulasi
-    await Future.delayed(const Duration(seconds: 1));
-
-    if (email.isNotEmpty && password.length >= 8) {
-      return {
-        'uid': 'pemilik_${DateTime.now().millisecondsSinceEpoch}',
-        'name': name,
-        'phone': phone,
+  /// Register pemilik
+  Future<UserModel?> registerPemilik({
+    required String nama,
+    required String noHp,
+    required String email,
+    required String password,
+  }) async {
+    final response = await ApiClient.post(
+      ApiEndpoints.register,
+      body: {
+        'nama': nama,
+        'no_hp': noHp,
         'email': email,
+        'password': password,
         'role': 'pemilik',
-      };
+      },
+    );
+    if (response['status'] == 'success') {
+      return UserModel.fromJson(response['data'] as Map<String, dynamic>);
     }
-    return null; // Return null jika gagal registrasi
+    return null;
+  }
+
+  /// Logout
+  Future<void> logout() async {
+    try {
+      await ApiClient.post(ApiEndpoints.logout, body: {});
+    } catch (_) {
+      // Logout lokal tetap jalan meski server gagal
+    }
   }
 }

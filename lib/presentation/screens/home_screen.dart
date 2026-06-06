@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../providers/kost_provider.dart';
+import '../../data/model/kost_model.dart';
 import 'search_screen.dart';
 import 'detail_kost_screen.dart';
 import 'all_kost_screen.dart';
@@ -22,108 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late Timer _bannerTimer;
   bool _showBackToTopButton = false;
 
-  // ==================== MASTER DATA KOSAN DINAMIS ====================
-  final List<Map<String, dynamic>> _listKost = [
-    {
-      'nama': 'Kost Wisma Serasi Tipe A',
-      'lokasi': 'Serpong, Tangerang',
-      'harga': 'Rp 1.431.500',
-      'hargaCoret': 'Rp 1.475.000',
-      'tipe': 'Campur',
-      'sisa': 'Sisa 3 Kamar',
-      'rating': '4.6',
-      'diskon': 'Diskon 44rb',
-      'fasilitas': 'K. Mandi Dalam • WiFi • AC • Kasur',
-      'foto': 'Kos1.png',
-      'ukuranKamar': '3x4 meter',
-      'lokasiLengkap': 'Jl. Serpong Raya No.12, Serpong, Tangerang, Banten',
-      'fasilitasKamar': [
-        'WiFi Gratis',
-        'Kasur Springbed',
-        'Lemari Pakaian',
-        'AC 1/2 PK'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Stasiun Serpong', 'jarak': '10m'},
-        {'nama': 'Pasar Modern Serpong', 'jarak': '400m'}
-      ],
-    },
-    {
-      'nama': 'Pondok Gusgas 2',
-      'lokasi': 'Cibiru, Kab. Bandung',
-      'harga': 'Rp 850.000',
-      'hargaCoret': 'Rp 1.000.000',
-      'tipe': 'Putra',
-      'sisa': 'Sisa 2 Kamar',
-      'rating': '4.8',
-      'diskon': 'Diskon 150rb',
-      'fasilitas': 'WiFi • Kasur • Lemari • Parkir',
-      'foto': 'Kos2.png',
-      'ukuranKamar': '3x3 meter',
-      'lokasiLengkap':
-          'Jl. Cibiru Indah No.45, Cibiru, Kab. Bandung, Jawa Barat',
-      'fasilitasKamar': [
-        'WiFi Koridor',
-        'Kasur Busa',
-        'Lemari Kayu',
-        'Meja Belajar'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Kampus UIN Bandung', 'jarak': '500m'},
-        {'nama': 'Borma Cibiru', 'jarak': '800m'}
-      ],
-    },
-    {
-      'nama': 'Pondok Priangan 1',
-      'lokasi': 'Cibiru, Kab. Bandung',
-      'harga': 'Rp 900.000',
-      'hargaCoret': 'Rp 950.000',
-      'tipe': 'Putri',
-      'sisa': 'Sisa 5 Kamar',
-      'rating': '4.5',
-      'diskon': 'Diskon 50rb',
-      'fasilitas': 'K. Mandi Dalam • WiFi • Kasur',
-      'foto': 'Kos3.png',
-      'ukuranKamar': '3.5x3.5 meter',
-      'lokasiLengkap':
-          'Cileunyi-Cibiru Blok C No.3, Cibiru, Kab. Bandung, Jawa Barat',
-      'fasilitasKamar': [
-        'Kamar Mandi Dalam',
-        'WiFi Fast',
-        'Kasur Kapuk',
-        'Gantungan Baju'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Bundaran Cibiru', 'jarak': '300m'},
-        {'nama': 'Polda Jabar', 'jarak': '1.2km'}
-      ],
-    },
-    {
-      'nama': 'Pondok Priangan 2',
-      'lokasi': 'Cibiru, Kab. Bandung',
-      'harga': 'Rp 950.000',
-      'hargaCoret': 'Rp 1.100.000',
-      'tipe': 'Campur',
-      'sisa': 'Sisa 1 Kamar',
-      'rating': '4.7',
-      'diskon': 'Diskon 150rb',
-      'fasilitas': 'K. Mandi Dalam • WiFi • AC',
-      'foto': 'kos4.png',
-      'ukuranKamar': '4x4 meter',
-      'lokasiLengkap':
-          'Samping Gang Priangan No.88, Cibiru, Kab. Bandung, Jawa Barat',
-      'fasilitasKamar': [
-        'AC Dingin',
-        'Kamar Mandi Shower',
-        'Kasur King Size',
-        'WiFi 5G'
-      ],
-      'tempatTerdekat': [
-        {'nama': 'Stasiun Cimekar', 'jarak': '2.5km'},
-        {'nama': 'Warteg Priangan', 'jarak': '50m'}
-      ],
-    },
-  ];
+  // ==================== DATA KOSAN DIHAPUS — sekarang dari KostProvider ====================
 
   final List<Map<String, dynamic>> _promoBanners = [
     {
@@ -152,6 +54,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    // Load kost dari API
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<KostProvider>().fetchAllKost();
+    });
+
     _bannerTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (_currentBannerIndex < _promoBanners.length - 1) {
         _currentBannerIndex++;
@@ -266,33 +173,54 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (widget.isLoggedIn) ...[
                     _buildPromoCarousel(),
                     const SizedBox(height: 32),
-                    _buildSectionTitle('Super Rare Kost', onSeeAll: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  AllKostScreen(dataKos: _listKost)));
-                    }),
-                    const SizedBox(height: 16),
-                    _buildSuperRareList(context),
-                    const SizedBox(height: 32),
-                    _buildSectionTitle('Pilihan Kos Baru Buatmu', onSeeAll: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  AllKostScreen(dataKos: _listKost)));
-                    }),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text('Yuk cek kos yang baru join KostGo.',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: Colors.grey, fontSize: 13)),
+                    Consumer<KostProvider>(
+                      builder: (context, kostProvider, _) {
+                        final list = kostProvider.allKost;
+                        if (kostProvider.isLoading) {
+                          return const Center(
+                              child: Padding(
+                            padding: EdgeInsets.all(40),
+                            child:
+                                CircularProgressIndicator(color: kPrimaryColor),
+                          ));
+                        }
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildSectionTitle('Super Rare Kost', onSeeAll: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AllKostScreen(
+                                          dataKos: _toMapList(list))));
+                            }),
+                            const SizedBox(height: 16),
+                            _buildSuperRareList(context, list),
+                            const SizedBox(height: 32),
+                            _buildSectionTitle('Pilihan Kos Baru Buatmu',
+                                onSeeAll: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AllKostScreen(
+                                          dataKos: _toMapList(list))));
+                            }),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              child: Text('Yuk cek kos yang baru join KostGo.',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                          color: Colors.grey, fontSize: 13)),
+                            ),
+                            const SizedBox(height: 16),
+                            _buildNewKostGrid(context, list),
+                          ],
+                        );
+                      },
                     ),
-                    const SizedBox(height: 16),
-                    _buildNewKostGrid(context),
                   ],
                   const SizedBox(height: 120),
                 ],
@@ -573,37 +501,57 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSuperRareList(BuildContext context) {
+  /// Konversi KostModel ke Map untuk AllKostScreen (yang masih pakai Map)
+  List<Map<String, dynamic>> _toMapList(List<KostModel> list) => list
+      .map((k) => {
+            'nama': k.nama,
+            'lokasi': k.lokasi,
+            'harga': k.hargaFormatted,
+            'hargaCoret': k.hargaCoretFormatted ?? '',
+            'tipe': k.tipe,
+            'sisa': k.sisaKamarText,
+            'rating': k.rating.toString(),
+            'diskon': k.diskon ?? '',
+            'fasilitas': k.fasilitas ?? '',
+            'foto': k.foto ?? '',
+            'ukuranKamar': k.ukuranKamar ?? '',
+            'lokasiLengkap': k.lokasiLengkap,
+            'fasilitasKamar': k.fasilitasKamar,
+            'tempatTerdekat': k.tempatTerdekat,
+          })
+      .toList();
+
+  void _navigateToDetail(BuildContext context, KostModel kos) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => DetailKostScreen(
+            kostId: kos.id,
+            nama: kos.nama,
+            harga: kos.hargaFormatted,
+            tipe: kos.tipe,
+            foto: kos.foto ?? '',
+            ukuranKamar: kos.ukuranKamar ?? '',
+            lokasiLengkap: kos.lokasiLengkap,
+            fasilitasKamar: kos.fasilitasKamar,
+            tempatTerdekat: kos.tempatTerdekat,
+            rating: kos.rating.toString(),
+            fasilitas: kos.fasilitas ?? '',
+          ),
+        ));
+  }
+
+  Widget _buildSuperRareList(BuildContext context, List<KostModel> listKost) {
     return SizedBox(
       height: 400,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(
-            left: 20, bottom: 20), // Added bottom padding for shadow
-        itemCount: _listKost.length,
+        padding: const EdgeInsets.only(left: 20, bottom: 20),
+        itemCount: listKost.length,
         itemBuilder: (context, index) {
-          final kos = _listKost[index];
+          final kos = listKost[index];
           return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailKostScreen(
-                    nama: kos['nama'],
-                    harga: kos['harga'],
-                    tipe: kos['tipe'],
-                    foto: kos['foto'],
-                    ukuranKamar: kos['ukuranKamar'],
-                    lokasiLengkap: kos['lokasiLengkap'],
-                    fasilitasKamar: List<String>.from(kos['fasilitasKamar']),
-                    tempatTerdekat:
-                        List<Map<String, String>>.from(kos['tempatTerdekat']),
-                    rating: kos['rating'] ?? '4.8',
-                    fasilitas: kos['fasilitas'] ?? '',
-                  ),
-                ),
-              );
-            },
+            onTap: () => _navigateToDetail(context, kos),
             child: Container(
               width: 260,
               margin: const EdgeInsets.only(right: 20),
@@ -622,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: double.infinity,
                           color: const Color(0xff2d2d2d),
                           child: Image.asset(
-                            'assets/images/${kos['foto']}',
+                            'assets/images/${kos.foto ?? ''}',
                             fit: BoxFit.cover,
                             errorBuilder: (context, error, stackTrace) {
                               return const Center(
@@ -684,7 +632,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               decoration: BoxDecoration(
                                   border: Border.all(color: Colors.white24),
                                   borderRadius: BorderRadius.circular(6)),
-                              child: Text(kos['tipe'],
+                              child: Text(kos.tipe,
                                   style: Theme.of(context)
                                       .textTheme
                                       .labelSmall
@@ -693,7 +641,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold)),
                             ),
-                            Text(kos['sisa'],
+                            Text(kos.sisaKamarText,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
@@ -705,7 +653,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         const SizedBox(height: 10),
-                        Text(kos['nama'],
+                        Text(kos.nama,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge
@@ -722,7 +670,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: Colors.grey, size: 12),
                             const SizedBox(width: 4),
                             Expanded(
-                                child: Text(kos['lokasi'],
+                                child: Text(kos.lokasi,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall
@@ -733,7 +681,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        Text(kos['fasilitas'],
+                        Text(kos.fasilitas ?? '',
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall
@@ -746,7 +694,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const Icon(Icons.star,
                                 color: Color(0xff14b8a6), size: 14),
                             const SizedBox(width: 4),
-                            Text(kos['rating'],
+                            Text(kos.rating.toString(),
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
@@ -762,7 +710,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const Icon(Icons.bolt,
                                 color: Colors.redAccent, size: 14),
                             const SizedBox(width: 4),
-                            Text(kos['diskon'],
+                            Text(kos.diskon ?? '',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
@@ -771,7 +719,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold)),
                             const SizedBox(width: 8),
-                            Text(kos['hargaCoret'],
+                            Text(kos.hargaCoretFormatted ?? '',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
@@ -786,7 +734,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            Text(kos['harga'],
+                            Text(kos.hargaFormatted,
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
@@ -816,8 +764,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ==================== KODINGAN TERPOTONG SUDAH DILENGKAPI ====================
-  Widget _buildNewKostGrid(BuildContext context) {
+  // ==================== GRID KOST BARU ====================
+  Widget _buildNewKostGrid(BuildContext context, List<KostModel> listKost) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -826,32 +774,13 @@ class _HomeScreenState extends State<HomeScreen> {
         crossAxisCount: 2,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
-        childAspectRatio: 0.65, // Disesuaikan agar card proporsional
+        childAspectRatio: 0.65,
       ),
-      itemCount: _listKost.length,
+      itemCount: listKost.length,
       itemBuilder: (context, index) {
-        final kos = _listKost[index];
+        final kos = listKost[index];
         return InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DetailKostScreen(
-                  nama: kos['nama'],
-                  harga: kos['harga'],
-                  tipe: kos['tipe'],
-                  foto: kos['foto'],
-                  ukuranKamar: kos['ukuranKamar'],
-                  lokasiLengkap: kos['lokasiLengkap'],
-                  fasilitasKamar: List<String>.from(kos['fasilitasKamar']),
-                  tempatTerdekat:
-                      List<Map<String, String>>.from(kos['tempatTerdekat']),
-                  rating: kos['rating'] ?? '4.8',
-                  fasilitas: kos['fasilitas'] ?? '',
-                ),
-              ),
-            );
-          },
+          onTap: () => _navigateToDetail(context, kos),
           borderRadius: BorderRadius.circular(16),
           child: Container(
             decoration: kElevatedCardDecoration(radius: 16),
@@ -868,17 +797,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Stack(
                       children: [
                         Image.asset(
-                          'assets/images/${kos['foto']}',
+                          'assets/images/${kos.foto ?? ''}',
                           fit: BoxFit.cover,
                           width: double.infinity,
                           height: double.infinity,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Center(
-                                child: Icon(Icons.image_outlined,
-                                    color: Colors.white12, size: 30));
-                          },
+                          errorBuilder: (_, __, ___) => const Center(
+                              child: Icon(Icons.image_outlined,
+                                  color: Colors.white12, size: 30)),
                         ),
-                        // Label Promo / Baru
                         Positioned(
                           top: 8,
                           left: 8,
@@ -887,8 +813,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 horizontal: 6, vertical: 3),
                             decoration: const BoxDecoration(
                               color: Colors.orange,
-                              borderRadius: BorderRadius.all(Radius.circular(
-                                  6)), // BAGIAN YANG SEBELUMNYA TERPOTONG
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(6)),
                             ),
                             child: Text('PROMO',
                                 style: Theme.of(context)
@@ -904,19 +830,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-                // Detail Teks Kos Baru
                 Padding(
                   padding: const EdgeInsets.all(12),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(kos['tipe'],
+                      Text(kos.tipe,
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall
                               ?.copyWith(color: Colors.white54, fontSize: 10)),
                       const SizedBox(height: 4),
-                      Text(kos['nama'],
+                      Text(kos.nama,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -927,7 +852,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 4),
-                      Text(kos['lokasi'],
+                      Text(kos.lokasi,
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
@@ -935,7 +860,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis),
                       const SizedBox(height: 8),
-                      Text(kos['harga'],
+                      Text(kos.hargaFormatted,
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall

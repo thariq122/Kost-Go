@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../ui_helpers.dart';
+import '../../../providers/auth_provider.dart';
+import '../splash_screen.dart';
 import 'owner_notification_screen.dart';
 
 class OwnerProfileScreen extends StatelessWidget {
   const OwnerProfileScreen({super.key});
 
   void _showEditProfile(BuildContext context) {
-    final nameController = TextEditingController(text: 'Budi Hartono');
-    final phoneController = TextEditingController(text: '08123456789');
-    final emailController =
-        TextEditingController(text: 'budi.hartono@email.com');
+    final auth = context.read<AuthProvider>();
+    final nameController = TextEditingController(text: auth.userName);
+    final phoneController = TextEditingController(text: auth.userPhone);
+    final emailController = TextEditingController(text: auth.userEmail);
 
     showModalBottomSheet(
       context: context,
@@ -253,6 +256,7 @@ class OwnerProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final auth = context.watch<AuthProvider>();
     return Scaffold(
       backgroundColor: kScaffoldBg,
       body: SafeArea(
@@ -308,13 +312,13 @@ class OwnerProfileScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    Text('Budi Hartono',
+                    Text(auth.userName,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 20)),
                     const SizedBox(height: 4),
-                    Text('Pemilik Kos • Serpong, Tangerang',
+                    Text('Pemilik Kos',
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall
@@ -477,9 +481,18 @@ class OwnerProfileScreen extends StatelessWidget {
                     ?.copyWith(color: Colors.grey)),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              Navigator.of(context).popUntil((route) => route.isFirst);
+            onPressed: () async {
+              Navigator.pop(ctx); // tutup dialog
+              await context.read<AuthProvider>().logout();
+              if (context.mounted) {
+                // Kembali ke splash/root dan clear semua navigation stack
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const _SplashRedirect(),
+                  ),
+                  (route) => false,
+                );
+              }
             },
             child: Text('Keluar',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -489,4 +502,11 @@ class OwnerProfileScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Helper widget — redirect ke SplashScreen setelah logout
+class _SplashRedirect extends StatelessWidget {
+  const _SplashRedirect();
+  @override
+  Widget build(BuildContext context) => const SplashScreen();
 }

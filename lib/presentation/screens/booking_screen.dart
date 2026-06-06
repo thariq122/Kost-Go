@@ -2,12 +2,16 @@ import 'dart:io';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/booking_provider.dart';
 import 'ui_helpers.dart';
 import 'booking_history_screen.dart';
 
 enum PaymentMethod { transfer, cash }
 
 class BookingScreen extends StatefulWidget {
+  final int kostId;
   final String namaKost;
   final String harga;
   final String tipe;
@@ -16,6 +20,7 @@ class BookingScreen extends StatefulWidget {
 
   const BookingScreen({
     super.key,
+    this.kostId = 0,
     required this.namaKost,
     required this.harga,
     required this.tipe,
@@ -39,11 +44,18 @@ class _BookingScreenState extends State<BookingScreen> {
   final List<int> _durationOptions = [1, 3, 6, 12];
   final _imagePicker = ImagePicker();
 
-  final TextEditingController _nameController =
-      TextEditingController(text: 'Andi Saputra');
-  final TextEditingController _phoneController =
-      TextEditingController(text: '08123456789');
+  late final TextEditingController _nameController;
+  late final TextEditingController _phoneController;
   final TextEditingController _noteController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Prefill dari data akun yang sedang login
+    final auth = context.read<AuthProvider>();
+    _nameController = TextEditingController(text: auth.userName);
+    _phoneController = TextEditingController(text: auth.userPhone);
+  }
 
   String get _totalHarga {
     final hargaNum =
@@ -216,7 +228,7 @@ class _BookingScreenState extends State<BookingScreen> {
     if (_currentStep > 0) setState(() => _currentStep--);
   }
 
-  void _submitBooking() {
+  void _submitBooking() async {
     // Validasi: transfer wajib upload bukti
     if (_paymentMethod == PaymentMethod.transfer && _proofXFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -224,6 +236,44 @@ class _BookingScreenState extends State<BookingScreen> {
           content: Text('Harap upload bukti transfer terlebih dahulu'),
           backgroundColor: Colors.orangeAccent,
           duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    final auth = context.read<AuthProvider>();
+    final booking = context.read<BookingProvider>();
+
+    // Format tanggal ke YYYY-MM-DD
+    final tanggal =
+        '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}';
+
+    final hargaNum =
+        int.tryParse(widget.harga.replaceAll('Rp ', '').replaceAll('.', '')) ??
+            0;
+    final totalHarga = hargaNum * _selectedDuration;
+
+    final ok = await booking.createBooking(
+      userId: auth.userId,
+      kostId: widget.kostId,
+      namaPenyewa: _nameController.text.trim(),
+      noHp: _phoneController.text.trim(),
+      tanggalMasuk: tanggal,
+      durasiBulan: _selectedDuration,
+      totalHarga: totalHarga,
+      metodeBayar:
+          _paymentMethod == PaymentMethod.transfer ? 'transfer' : 'tunai',
+      buktiTransfer: _proofXFile,
+      catatan: _noteController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(booking.errorMessage ?? 'Booking gagal, coba lagi'),
+          backgroundColor: Colors.redAccent,
         ),
       );
       return;
@@ -283,6 +333,9 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
                 onPressed: () {
                   Navigator.pop(ctx);
+                  // Refresh riwayat booking sebelum navigate
+                  final userId = context.read<AuthProvider>().userId;
+                  context.read<BookingProvider>().fetchUserBookings(userId);
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(

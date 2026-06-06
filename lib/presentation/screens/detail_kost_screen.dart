@@ -4,6 +4,7 @@ import 'booking_screen.dart';
 import 'ui_helpers.dart';
 
 class DetailKostScreen extends StatefulWidget {
+  final int kostId;
   final String nama;
   final String harga;
   final String tipe;
@@ -17,6 +18,7 @@ class DetailKostScreen extends StatefulWidget {
 
   const DetailKostScreen({
     super.key,
+    this.kostId = 0,
     required this.nama,
     required this.harga,
     required this.tipe,
@@ -39,6 +41,7 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => BookingScreen(
+          kostId: widget.kostId,
           namaKost: widget.nama,
           harga: widget.harga,
           tipe: widget.tipe,
