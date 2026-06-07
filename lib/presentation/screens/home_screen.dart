@@ -122,7 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildSectionTitle('Promo Kos', onSeeAll: () {
+                            _buildSectionTitle('Pilihan Kos Baru Buatmu',
+                                onSeeAll: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -132,8 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const SizedBox(height: 16),
                             _buildSuperRareList(context, list),
                             const SizedBox(height: 32),
-                            _buildSectionTitle('Pilihan Kos Baru Buatmu',
-                                onSeeAll: () {
+                            _buildSectionTitle('Promo Kos', onSeeAll: () {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
