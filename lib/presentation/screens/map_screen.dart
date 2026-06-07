@@ -111,15 +111,12 @@ class _MapScreenState extends State<MapScreen> {
       appBar: AppBar(
         backgroundColor: kAppBarBg,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Lokasi Kos',
+              'Lokasi Sekarang',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Colors.white,
                   fontSize: 16,

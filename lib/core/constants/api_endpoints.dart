@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart';
 
 class ApiEndpoints {
   /// Ganti sesuai environment:
@@ -12,12 +11,21 @@ class ApiEndpoints {
 
   static String get baseUrl {
     if (kIsWeb) {
-      return _webBaseUrl;
+      // Flutter Web: pakai relative URL agar same-origin dengan XAMPP
+      // Saat flutter run -d chrome (localhost:PORT), tetap pakai absolute
+      // Saat di-serve dari XAMPP (localhost/kostgo_app), pakai relative
+      final uri = Uri.base;
+      if (uri.port == 80 || uri.port == 443 || uri.port == 0) {
+        // Di-serve dari XAMPP — same origin, pakai absolute localhost
+        return 'http://localhost/kostgo_api';
+      }
+      // Flutter dev server (port berbeda) — pakai localhost langsung
+      return 'http://localhost/kostgo_api';
     }
-    if (Platform.isAndroid) {
+    if (defaultTargetPlatform == TargetPlatform.android) {
       return 'http://10.0.2.2/kostgo_api';
     }
-    if (Platform.isIOS) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
       return 'http://localhost/kostgo_api';
     }
     return 'http://$_deviceIp/kostgo_api';

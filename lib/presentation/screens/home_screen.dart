@@ -232,16 +232,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       .bodyMedium
                       ?.copyWith(color: Colors.grey, fontSize: 14)),
               const Spacer(),
-              Container(
-                margin: const EdgeInsets.only(right: 8),
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  gradient: kPrimaryGradient,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(Icons.tune_rounded,
-                    color: Colors.white, size: 18),
-              )
             ],
           ),
         ),
@@ -368,290 +358,159 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSuperRareList(BuildContext context, List<KostModel> listKost) {
-    return SizedBox(
-      height: 400,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.only(left: 20, bottom: 20),
-        itemCount: listKost.length,
-        itemBuilder: (context, index) {
-          final kos = listKost[index];
-          return GestureDetector(
-            onTap: () => _navigateToDetail(context, kos),
-            child: Container(
-              width: 260,
-              margin: const EdgeInsets.only(right: 20),
-              decoration: kElevatedCardDecoration(radius: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Stack(
-                    clipBehavior: Clip.hardEdge,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(20)),
-                        child: Container(
-                          height: 160,
-                          width: double.infinity,
-                          color: const Color(0xff2d2d2d),
-                          child: Image.asset(
-                            'assets/images/${kos.foto ?? ''}',
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Center(
-                                  child: Icon(Icons.image_outlined,
-                                      color: Colors.white12, size: 40));
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.white24),
-                                  borderRadius: BorderRadius.circular(6)),
-                              child: Text(kos.tipe,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall
-                                      ?.copyWith(
-                                          color: Colors.white70,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold)),
-                            ),
-                            Text(kos.sisaKamarText,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                        color: Colors.redAccent,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.bold,
-                                        fontStyle: FontStyle.italic)),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text(kos.nama,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyLarge
-                                ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 15),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            const Icon(Icons.location_on,
-                                color: Colors.grey, size: 12),
-                            const SizedBox(width: 4),
-                            Expanded(
-                                child: Text(kos.lokasi,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(
-                                            color: Colors.grey, fontSize: 12),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis)),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(kos.fasilitas ?? '',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(color: Colors.grey, fontSize: 11),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            const Icon(Icons.star,
-                                color: Color(0xff14b8a6), size: 14),
-                            const SizedBox(width: 4),
-                            Text(kos.rating.toString(),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                        color: kPrimaryColor,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            const Icon(Icons.bolt,
-                                color: Colors.redAccent, size: 14),
-                            const SizedBox(width: 4),
-                            Text(kos.diskon ?? '',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                        color: Colors.redAccent,
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold)),
-                            const SizedBox(width: 8),
-                            Text(kos.hargaCoretFormatted ?? '',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                        color: Colors.grey,
-                                        fontSize: 11,
-                                        decoration:
-                                            TextDecoration.lineThrough)),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(kos.hargaFormatted,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16)),
-                            Text(' /bln',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.5),
-                                        fontSize: 11)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Di layar lebar (web/tablet) pakai grid 2 kolom, mobile pakai horizontal scroll
+        final isWide = constraints.maxWidth > 600;
+
+        if (isWide) {
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 0.72,
             ),
+            itemCount: listKost.length,
+            itemBuilder: (context, index) {
+              final kos = listKost[index];
+              return _buildKostCard(context, kos);
+            },
           );
-        },
-      ),
+        }
+
+        // Mobile: horizontal scroll
+        return SizedBox(
+          height: 400,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.only(left: 20, bottom: 20),
+            itemCount: listKost.length,
+            itemBuilder: (context, index) {
+              final kos = listKost[index];
+              return SizedBox(
+                width: 260,
+                child: _buildKostCard(context, kos, horizontalMargin: true),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 
-  // ==================== GRID KOST BARU ====================
-  Widget _buildNewKostGrid(BuildContext context, List<KostModel> listKost) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 16,
-        crossAxisSpacing: 16,
-        childAspectRatio: 0.65,
-      ),
-      itemCount: listKost.length,
-      itemBuilder: (context, index) {
-        final kos = listKost[index];
-        return InkWell(
-          onTap: () => _navigateToDetail(context, kos),
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            decoration: kElevatedCardDecoration(radius: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildKostCard(BuildContext context, KostModel kos,
+      {bool horizontalMargin = false}) {
+    return GestureDetector(
+      onTap: () => _navigateToDetail(context, kos),
+      child: Container(
+        margin: horizontalMargin
+            ? const EdgeInsets.only(right: 20)
+            : EdgeInsets.zero,
+        decoration: kElevatedCardDecoration(radius: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Stack(
+              clipBehavior: Clip.hardEdge,
               children: [
                 ClipRRect(
                   borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16)),
+                      const BorderRadius.vertical(top: Radius.circular(20)),
                   child: Container(
-                    height: 120,
+                    height: 160,
                     width: double.infinity,
                     color: const Color(0xff2d2d2d),
-                    child: Stack(
-                      children: [
-                        Image.asset(
-                          'assets/images/${kos.foto ?? ''}',
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: double.infinity,
-                          errorBuilder: (_, __, ___) => const Center(
-                              child: Icon(Icons.image_outlined,
-                                  color: Colors.white12, size: 30)),
-                        ),
-                        Positioned(
-                          top: 8,
-                          left: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 3),
-                            decoration: const BoxDecoration(
-                              color: Colors.orange,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(6)),
-                            ),
-                            child: Text('PROMO',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .labelSmall
-                                    ?.copyWith(
-                                        color: Colors.white,
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                      ],
+                    child: Image.asset(
+                      'assets/images/${kos.foto ?? ''}',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Center(
+                            child: Icon(Icons.image_outlined,
+                                color: Colors.white12, size: 40));
+                      },
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              ],
+            ),
+            const SizedBox(height: 12),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(kos.tipe,
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelSmall
-                              ?.copyWith(color: Colors.white54, fontSize: 10)),
-                      const SizedBox(height: 4),
-                      Text(kos.nama,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                  color: Colors.white,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 4),
-                      Text(kos.lokasi,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.white24),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Text(kos.tipe,
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(
+                                    color: Colors.white70,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold)),
+                      ),
+                      Text(kos.sisaKamarText,
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
-                              ?.copyWith(color: Colors.grey, fontSize: 11),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 8),
-                      Text(kos.hargaFormatted,
+                              ?.copyWith(
+                                  color: Colors.redAccent,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.italic)),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(kos.nama,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on,
+                          color: Colors.grey, size: 12),
+                      const SizedBox(width: 4),
+                      Expanded(
+                          child: Text(kos.lokasi,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.grey, fontSize: 12),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(kos.fasilitas ?? '',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Colors.grey, fontSize: 11),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.star,
+                          color: Color(0xff14b8a6), size: 14),
+                      const SizedBox(width: 4),
+                      Text(kos.rating.toString(),
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall
@@ -661,10 +520,185 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontWeight: FontWeight.bold)),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.bolt, color: Colors.redAccent, size: 14),
+                      const SizedBox(width: 4),
+                      Text(kos.diskon ?? '',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color: Colors.redAccent,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold)),
+                      const SizedBox(width: 8),
+                      Text(kos.hargaCoretFormatted ?? '',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color: Colors.grey,
+                                  fontSize: 11,
+                                  decoration: TextDecoration.lineThrough)),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(kos.hargaFormatted,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16)),
+                      Text(' /bln',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color: Colors.white.withValues(alpha: 0.5),
+                                  fontSize: 11)),
+                    ],
+                  ),
+                ],
+              ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ==================== GRID KOST BARU ====================
+  Widget _buildNewKostGrid(BuildContext context, List<KostModel> listKost) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Kolom menyesuaikan lebar layar
+        int crossAxisCount = 2;
+        double aspectRatio = 0.65;
+        if (constraints.maxWidth > 900) {
+          crossAxisCount = 4;
+          aspectRatio = 0.70;
+        } else if (constraints.maxWidth > 600) {
+          crossAxisCount = 3;
+          aspectRatio = 0.68;
+        }
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 16,
+            crossAxisSpacing: 16,
+            childAspectRatio: aspectRatio,
           ),
+          itemCount: listKost.length,
+          itemBuilder: (context, index) {
+            final kos = listKost[index];
+            return InkWell(
+              onTap: () => _navigateToDetail(context, kos),
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                decoration: kElevatedCardDecoration(radius: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(16)),
+                      child: Container(
+                        height: 120,
+                        width: double.infinity,
+                        color: const Color(0xff2d2d2d),
+                        child: Stack(
+                          children: [
+                            Image.asset(
+                              'assets/images/${kos.foto ?? ''}',
+                              fit: BoxFit.cover,
+                              width: double.infinity,
+                              height: double.infinity,
+                              errorBuilder: (_, __, ___) => const Center(
+                                  child: Icon(Icons.image_outlined,
+                                      color: Colors.white12, size: 30)),
+                            ),
+                            Positioned(
+                              top: 8,
+                              left: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 3),
+                                decoration: const BoxDecoration(
+                                  color: Colors.orange,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(6)),
+                                ),
+                                child: Text('PROMO',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.copyWith(
+                                            color: Colors.white,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(kos.tipe,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                      color: Colors.white54, fontSize: 10)),
+                          const SizedBox(height: 4),
+                          Text(kos.nama,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyLarge
+                                  ?.copyWith(
+                                      color: Colors.white,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                          const SizedBox(height: 4),
+                          Text(kos.lokasi,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(color: Colors.grey, fontSize: 11),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                          const SizedBox(height: 8),
+                          Text(kos.hargaFormatted,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                      color: kPrimaryColor,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );

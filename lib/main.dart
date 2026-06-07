@@ -50,7 +50,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// Restore session sebelum menampilkan SplashScreen
 class _AppInit extends StatefulWidget {
   const _AppInit();
   @override

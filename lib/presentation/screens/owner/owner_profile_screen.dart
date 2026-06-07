@@ -5,9 +5,14 @@ import '../../../providers/auth_provider.dart';
 import '../splash_screen.dart';
 import 'owner_notification_screen.dart';
 
-class OwnerProfileScreen extends StatelessWidget {
+class OwnerProfileScreen extends StatefulWidget {
   const OwnerProfileScreen({super.key});
 
+  @override
+  State<OwnerProfileScreen> createState() => _OwnerProfileScreenState();
+}
+
+class _OwnerProfileScreenState extends State<OwnerProfileScreen> {
   void _showEditProfile(BuildContext context) {
     final auth = context.read<AuthProvider>();
     final nameController = TextEditingController(text: auth.userName);
@@ -258,7 +263,6 @@ class OwnerProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = context.watch<AuthProvider>();
     return Scaffold(
-      backgroundColor: kScaffoldBg,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.only(bottom: 120),
@@ -280,36 +284,11 @@ class OwnerProfileScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Stack(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            gradient: kPrimaryGradient,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const CircleAvatar(
-                            radius: 44,
-                            backgroundColor: kCardBg,
-                            child: Icon(Icons.person_rounded,
-                                color: kPrimaryLight, size: 44),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: GestureDetector(
-                            onTap: () => _showEditProfile(context),
-                            child: Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: const BoxDecoration(
-                                  color: kPrimaryColor, shape: BoxShape.circle),
-                              child: const Icon(Icons.edit_rounded,
-                                  color: Colors.white, size: 14),
-                            ),
-                          ),
-                        ),
-                      ],
+                    const CircleAvatar(
+                      radius: 48,
+                      backgroundColor: kCardBg,
+                      child: Icon(Icons.person_rounded,
+                          color: kPrimaryLight, size: 44),
                     ),
                     const SizedBox(height: 14),
                     Text(auth.userName,

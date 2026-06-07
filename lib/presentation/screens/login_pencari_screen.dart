@@ -15,9 +15,9 @@ class LoginPencariScreen extends StatefulWidget {
 
 class _LoginPencariScreenState extends State<LoginPencariScreen> {
   final _formKey = GlobalKey<FormState>();
-
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -123,15 +123,21 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
               _buildFormField(
                 context: context,
                 label: 'Password',
-                isPass: true,
+                isPass: _obscurePassword,
                 controller: _passwordController,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.grey,
+                    size: 20,
+                  ),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
+                ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
+                  if (value == null || value.isEmpty)
                     return 'Password tidak boleh kosong';
-                  }
-                  if (value.length < 6) {
-                    return 'Password minimal 6 karakter';
-                  }
+                  if (value.length < 6) return 'Password minimal 6 karakter';
                   return null;
                 },
               ),
@@ -238,6 +244,7 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
     required TextEditingController controller,
     required String? Function(String?) validator,
     bool isPass = false,
+    Widget? suffixIcon,
   }) {
     return buildGlassContainer(
       radius: 12,
@@ -255,6 +262,7 @@ class _LoginPencariScreenState extends State<LoginPencariScreen> {
               .textTheme
               .bodySmall
               ?.copyWith(color: Colors.grey),
+          suffixIcon: suffixIcon,
           border: InputBorder.none,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 8),

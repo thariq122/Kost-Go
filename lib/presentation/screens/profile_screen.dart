@@ -84,20 +84,13 @@ class ProfileScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 20),
 
-              // 1. FOTO PROFIL & INFO UTAMA (UPDATE UTK WEB & HP)
+              // Avatar — tanpa fungsi ganti foto
               Center(
                 child: CircleAvatar(
                   radius: 50,
                   backgroundColor: kCardBg,
-                  // UBAH JADI MEMORYIMAGE JIKA ADA BYTES
-                  backgroundImage: authProvider.profileImageBytes != null
-                      ? MemoryImage(authProvider
-                          .profileImageBytes!) // <-- Pakai MemoryImage
-                      : null,
-                  child: authProvider.profileImageBytes == null
-                      ? const Icon(Icons.person,
-                          size: 50, color: Colors.tealAccent)
-                      : null,
+                  child: const Icon(Icons.person,
+                      size: 50, color: Colors.tealAccent),
                 ),
               ),
               const SizedBox(height: 16),

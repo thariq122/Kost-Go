@@ -17,6 +17,7 @@ class _LoginPemilikScreenState extends State<LoginPemilikScreen> {
   final _formKey = GlobalKey<FormState>();
   final _phoneCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -124,7 +125,7 @@ class _LoginPemilikScreenState extends State<LoginPemilikScreen> {
                 radius: 12,
                 child: TextFormField(
                   controller: _passwordCtrl,
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     labelText: 'Password',
@@ -135,6 +136,17 @@ class _LoginPemilikScreenState extends State<LoginPemilikScreen> {
                     border: InputBorder.none,
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
+                    ),
                   ),
                   validator: (v) {
                     if (v == null || v.isEmpty) return 'Password wajib diisi';

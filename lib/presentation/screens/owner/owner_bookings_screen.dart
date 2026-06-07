@@ -140,9 +140,26 @@ class _OwnerBookingsScreenState extends State<OwnerBookingsScreen>
                         child: Image.network(
                           '${ApiEndpoints.baseUrl}/${booking.buktiTransfer}',
                           fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: double.infinity,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return const Center(
+                                child: CircularProgressIndicator(
+                                    color: kPrimaryColor, strokeWidth: 2));
+                          },
                           errorBuilder: (_, __, ___) => const Center(
-                              child: Icon(Icons.broken_image_rounded,
-                                  color: Colors.white24, size: 36)),
+                              child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.broken_image_rounded,
+                                  color: Colors.white24, size: 36),
+                              SizedBox(height: 6),
+                              Text('Gambar tidak dapat dimuat',
+                                  style: TextStyle(
+                                      color: Colors.white38, fontSize: 11)),
+                            ],
+                          )),
                         ),
                       )
                     : Column(

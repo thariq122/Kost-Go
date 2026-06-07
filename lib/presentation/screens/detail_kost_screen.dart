@@ -208,11 +208,7 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                               Icons.check_circle_outline_rounded, fasilitas);
                         }).toList(),
                       ),
-                      _buildTextButton(
-                          context, 'Lihat semua fasilitas kamar tipe ini'),
                       const Divider(color: Colors.white10, height: 32),
-
-                      // --- 3. FASILITAS KAMAR MANDI ---
                       _buildSectionHeader(context, 'Fasilitas kamar mandi'),
                       _buildInfoRow(context, Icons.bathtub_outlined,
                           'Kamar Mandi Dalam (Shower)'),
@@ -341,19 +337,6 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                       ),
                       const SizedBox(height: 20),
 
-                      // SEGMEN TEMPAT TERDEKAT (DINAMIS)
-                      _buildSectionHeader(context, 'Tempat Terdekat'),
-                      const SizedBox(height: 8),
-                      Column(
-                        children: widget.tempatTerdekat.map((tempat) {
-                          return _buildLocationDetailRow(
-                              context,
-                              Icons.place_outlined,
-                              tempat['nama'] ?? '',
-                              tempat['jarak'] ?? '');
-                        }).toList(),
-                      ),
-
                       const SizedBox(height: 140),
                     ],
                   ),
@@ -362,135 +345,90 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
             ),
           ),
 
-          // 2. ACTION BOTTOM BAR
+          // ACTION BOTTOM BAR
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                    colors: [Color(0xffdc2626), Color(0xff991b1b)],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  )),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.bolt,
-                              color: Colors.yellowAccent, size: 16),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Diskon Kilat Berlaku ',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12),
-                          ),
-                        ],
-                      ),
-                      const Icon(Icons.arrow_forward_ios,
-                          color: Colors.white, size: 10),
-                    ],
-                  ),
-                ),
-                buildGlassContainer(
-                  radius: 0,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  child: SafeArea(
-                    top: false,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: buildGlassContainer(
+              radius: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  widget.harga,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                          color: kPrimaryLight,
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  ' /bulan',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                          color: Colors.grey, fontSize: 12),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
                             Text(
-                              'Estimasi Pembayaran',
+                              widget.harga,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
+                                      color: kPrimaryLight,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              ' /bulan',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodySmall
-                                  ?.copyWith(
-                                      color: Colors.white70,
-                                      fontSize: 12,
-                                      decoration: TextDecoration.underline),
+                                  ?.copyWith(color: Colors.grey, fontSize: 12),
                             ),
                           ],
                         ),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                              onPressed: () => _openBooking(context),
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.zero,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12)),
-                              ),
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  gradient: kPrimaryGradient,
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 14),
-                                  child: Text(
-                                    'Ajukan Sewa',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelLarge
-                                        ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
+                        const SizedBox(height: 4),
+                        Text(
+                          'Estimasi Pembayaran',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                  color: Colors.white70,
+                                  fontSize: 12,
+                                  decoration: TextDecoration.underline),
+                        ),
                       ],
                     ),
-                  ),
+                    ElevatedButton(
+                      onPressed: () => _openBooking(context),
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: kPrimaryGradient,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 14),
+                          child: Text(
+                            'Ajukan Sewa',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ],
@@ -543,56 +481,6 @@ class _DetailKostScreenState extends State<DetailKostScreen> {
                     color: Colors.white70, fontSize: 13, height: 1.4)),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildLocationDetailRow(
-      BuildContext context, IconData icon, String place, String distance) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.05),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: kAccentLight, size: 14),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-              child: Text(place,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.copyWith(color: Colors.white70, fontSize: 13))),
-          Text(distance,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Colors.white30, fontSize: 12)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTextButton(BuildContext context, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 6, bottom: 4),
-      child: OutlinedButton(
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: Colors.white10),
-          minimumSize: const Size(double.infinity, 40),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        ),
-        child: Text(text,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.white60,
-                fontSize: 13,
-                fontWeight: FontWeight.w500)),
       ),
     );
   }

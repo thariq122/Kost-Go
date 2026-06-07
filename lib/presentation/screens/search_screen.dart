@@ -148,30 +148,7 @@ class _SearchScreenState extends State<SearchScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Lokasi sekitar
-            InkWell(
-              onTap: () {},
-              borderRadius: BorderRadius.circular(12),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Row(
-                  children: [
-                    const Icon(Icons.my_location,
-                        color: kPrimaryLight, size: 20),
-                    const SizedBox(width: 12),
-                    Text(
-                      'Lokasi sekitar saya sekarang',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(color: Colors.white, fontSize: 14),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Divider(color: Colors.white10),
-            const SizedBox(height: 20),
+            const SizedBox(height: 8),
 
             // Kampus Berdasarkan Kota
             Text(

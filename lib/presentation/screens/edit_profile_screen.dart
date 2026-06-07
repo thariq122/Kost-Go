@@ -1,8 +1,6 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'ui_helpers.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import '../../providers/auth_provider.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -19,19 +17,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
 
-  // 2. UBAH VARIABEL TEMPORER MENJADI BYTES
-  Uint8List? _webImageBytes;
-
   @override
   void initState() {
     super.initState();
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-
     _nameController = TextEditingController(text: authProvider.userName);
     _emailController = TextEditingController(text: authProvider.userEmail);
     _phoneController = TextEditingController(text: authProvider.userPhone);
-    // Ambil bytes foto lama jika ada
-    _webImageBytes = authProvider.profileImageBytes;
   }
 
   @override
@@ -42,24 +34,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
-  // 3. UPDATE FUNGSI PICK IMAGE UTK BACA BYTES
-  Future<void> _pickImage() async {
-    final ImagePicker picker = ImagePicker();
-    // Di web, camera source biasanya diabaikan dan langsung buka file picker
-    final XFile? image = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 50,
-    );
-
-    if (image != null) {
-      // BACA GAMBAR SEBAGAI BYTES (Ini jalan di Web & HP)
-      var f = await image.readAsBytes();
-      setState(() {
-        _webImageBytes = f; // Set bytes gambar sementara di UI
-      });
-    }
-  }
-
   void _saveProfile() {
     if (_formKey.currentState!.validate()) {
       Provider.of<AuthProvider>(context, listen: false).updateProfile(
@@ -67,11 +41,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         _emailController.text,
         _phoneController.text,
       );
-
-      // 4. SIMPAN DATA BYTES KE PROVIDER
-      Provider.of<AuthProvider>(context, listen: false)
-          .updateProfilePicture(_webImageBytes);
-
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -106,42 +75,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- SEKSI FOTO PROFIL DINAMIS UTK WEB ---
-              Center(
-                child: Stack(
-                  children: [
-                    CircleAvatar(
-                      radius: 50,
-                      backgroundColor: kCardBg,
-                      // GUNAKAN MEMORYIMAGE UTK MENAMPILKAN BYTES
-                      backgroundImage: _webImageBytes != null
-                          ? MemoryImage(_webImageBytes!)
-                          : null,
-                      child: _webImageBytes == null
-                          ? const Icon(Icons.person,
-                              size: 50, color: kPrimaryLight)
-                          : null,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: kPrimaryLight,
-                        child: IconButton(
-                          padding: EdgeInsets.zero,
-                          icon: const Icon(Icons.camera_alt,
-                              size: 16, color: Colors.black),
-                          // Di web, fungsi picker pilihan dihapus, langsung panggil _pickImage
-                          onPressed: _pickImage,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 32),
-
+              const SizedBox(height: 8),
               _buildInputField(context, 'Nama Lengkap', _nameController,
                   Icons.person_outline),
               const SizedBox(height: 16),
@@ -153,7 +87,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   Icons.phone_outlined,
                   keyboardType: TextInputType.phone),
               const SizedBox(height: 40),
-
               InkWell(
                 onTap: _saveProfile,
                 borderRadius: BorderRadius.circular(12),

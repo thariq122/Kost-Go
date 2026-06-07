@@ -97,7 +97,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                     ?.copyWith(color: Colors.grey, fontSize: 13)),
             const SizedBox(height: 2),
             Text(
-              nama.isNotEmpty ? '$nama 👋' : 'Pemilik Kos 👋',
+              nama.isNotEmpty ? nama : 'Pemilik Kos',
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -116,17 +116,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                 padding: const EdgeInsets.all(10),
                 child: const Icon(Icons.notifications_outlined,
                     color: Colors.white70, size: 24),
-              ),
-            ),
-            const SizedBox(width: 10),
-            buildGlassContainer(
-              radius: 14,
-              padding: const EdgeInsets.all(2),
-              child: const CircleAvatar(
-                radius: 18,
-                backgroundColor: kCardBg,
-                child:
-                    Icon(Icons.person_rounded, color: kPrimaryLight, size: 22),
               ),
             ),
           ]),
